@@ -15,19 +15,29 @@
     font-family: sans-serif;
     flex-direction: column;
   }
+
   #timerButton {
-    width: 270px;        /* roughly half of iPhone screen width */
+    width: 270px; /* roughly half iPhone screen */
     height: 270px;
-    border-radius: 135px; 
-    background-color: red;
+    border-radius: 135px; /* perfectly circular */
+    background: linear-gradient(to bottom, #ff4d4d, #b30000); /* 3D gradient */
     color: white;
-    font-size: 48px;     /* proportional to button size */
+    font-size: 48px; /* proportional text */
     border: none;
     cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.1s, box-shadow 0.1s;
   }
+
+  /* Button press effect */
+  #timerButton:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+  }
+
   #timeDisplay {
     margin-top: 20px;
-    font-size: 48px;     /* proportional to button */
+    font-size: 48px; /* proportional to button */
   }
 </style>
 </head>
