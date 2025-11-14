@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>3 Second Reflex Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: white;
+    font-family: sans-serif;
+    flex-direction: column;
+  }
+  #timerButton {
+    width: 270px;        /* roughly half of iPhone screen width */
+    height: 270px;
+    border-radius: 135px; 
+    background-color: red;
+    color: white;
+    font-size: 48px;     /* proportional to button size */
+    border: none;
+    cursor: pointer;
+  }
+  #timeDisplay {
+    margin-top: 20px;
+    font-size: 48px;     /* proportional to button */
+  }
+</style>
+</head>
+<body>
+
+<button id="timerButton">Start</button>
+<div id="timeDisplay">0.000 s</div>
+
+<script>
+let running = false;
+let startTime = 0;
+let timerInterval;
+
+// Tiny inline beep sounds
+const winSound = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=");
+const failSound = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=");
+
+const button = document.getElementById('timerButton');
+const display = document.getElementById('timeDisplay');
+
+button.addEventListener('click', () => {
+  if (!running) {
+    // Start timer
+    running = true;
+    startTime = performance.now();
+    display.textContent = '0.000 s';
+    button.textContent = 'Stop';
+    document.body.style.backgroundColor = 'white';
+    requestAnimationFrame(updateTimer);
+  } else {
+    // Stop timer
+    running = false;
+    const elapsed = (performance.now() - startTime) / 1000;
+    display.textContent = elapsed.toFixed(3) + ' s';
+    
+    if (elapsed.toFixed(3) === '3.000') {
+      document.body.style.backgroundColor = 'green';
+      winSound.play();
+      button.textContent = 'You Win! Start Again';
+    } else {
+      document.body.style.backgroundColor = 'red';
+      failSound.play();
+      button.textContent = 'Try Again';
+    }
+  }
+});
+
+function updateTimer() {
+  if (running) {
+    const elapsed = (performance.now() - startTime) / 1000;
+    display.textContent = elapsed.toFixed(3) + ' s';
+    requestAnimationFrame(updateTimer);
+  }
+}
+</script>
+
+</body>
+</html>
