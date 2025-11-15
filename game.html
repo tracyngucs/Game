@@ -1,150 +1,298 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>3 Second Reflex Game</title>
+<meta charset="UTF-8">
+<title>Appointed Time</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  :root{--btn-size:270px;}
-  html,body{height:100%;margin:0}
-  body{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    background:#fff;
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
   }
-  #timerButton{
-    width:var(--btn-size);
-    height:var(--btn-size);
-    border-radius:50%;
-    background:linear-gradient(to bottom,#ff4d4d,#b30000);
-    color:#fff;
-    font-size:48px;
-    border:none;
-    cursor:pointer;
-    box-shadow:0 12px 26px rgba(0,0,0,0.35), 0 6px 10px rgba(0,0,0,0.18);
-    transition:transform .08s, box-shadow .08s;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+
+  /* HOME SCREEN */
+  #homeScreen {
+    text-align: center;
   }
-  #timerButton:active{
-    transform: translateY(5px);
-    box-shadow:0 6px 10px rgba(0,0,0,0.4);
+
+  #homeScreen input {
+    padding: 12px;
+    font-size: 20px;
+    width: 280px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
   }
-  #timeDisplay{margin-top:18px;font-size:48px}
-  #triesDisplay{margin-top:12px;font-size:22px;color:#222}
-  #message{margin-top:10px;font-size:20px;color:#333}
-  @media (max-width:420px){
-    :root{--btn-size:320px} /* bigger on small phones if wanted */
-    #timerButton{font-size:54px}
-    #timeDisplay{font-size:64px}
+
+  #startButton {
+    padding: 14px 30px;
+    font-size: 22px;
+    background: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  /* GAME SCREEN */
+  #gameScreen {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #timerButton {
+    width: 270px;
+    height: 270px;
+    border-radius: 135px;
+    background: linear-gradient(to bottom, #ff4d4d, #b30000);
+    color: white;
+    font-size: 48px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  #timerButton:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+  }
+
+  #timeDisplay {
+    margin-top: 20px;
+    font-size: 48px;
+  }
+
+  #triesDisplay {
+    margin-top: 15px;
+    font-size: 28px;
+  }
+
+  #message {
+    margin-top: 10px;
+    font-size: 26px;
+    color: #333;
+  }
+
+  #summaryBox {
+    margin-top: 20px;
+    padding: 15px;
+    width: 80%;
+    max-width: 400px;
+    border: 2px solid #444;
+    border-radius: 10px;
+    font-size: 20px;
+    background: #f7f7f7;
+    display: none;
+  }
+
+  #playerInfo {
+    margin-bottom: 20px;
+    font-size: 22px;
+  }
+
+  #playerChoice {
+    display: none;
+    margin-top: 20px;
+  }
+
+  #playerChoice button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #0077cc;
+    color: white;
+  }
+
+  #playerChoice button:hover {
+    background: #005fa3;
   }
 </style>
 </head>
 <body>
 
-<button id="timerButton">Start</button>
-<div id="timeDisplay">0.000 s</div>
-<div id="triesDisplay">Tries: 0 / 10</div>
-<div id="message"></div>
+<!-- HOME SCREEN -->
+<div id="homeScreen">
+  <h1>Appointed Time</h1>
+  <input type="text" id="playerName" placeholder="Enter Name" /><br>
+  <input type="tel" id="playerMobile" placeholder="Enter Mobile Number" /><br>
+  <button id="startButton">Start Now</button>
+</div>
 
-<!-- Arcade WIN sound (short chime) -->
-<audio id="winSound" preload="auto">
-  <source type="audio/wav" src="data:audio/wav;base64,UklGRmAwAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YTwwAAAAAgCAsJ6dX1tqZmZqZ2dnd3d3c3Nzc2tra2tra2tra2tra2tra2tra2tra2tqampqamppaWlpZmVmZWRkZGRjY2NjY2JiYmJiYmBgYGBgX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw==">
-</audio>
+<!-- GAME SCREEN -->
+<div id="gameScreen">
+  <div id="playerInfo"></div>
 
-<!-- Buzz LOSE sound (short buzzer) -->
-<audio id="failSound" preload="auto">
-  <source type="audio/wav" src="data:audio/wav;base64,UklGRkZWAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YSJWAAAAAgD9/f3+/v7+/v7+/v39/f3+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+">
-</audio>
+  <button id="timerButton">Start</button>
+  <div id="timeDisplay">0.000 s</div>
+  <div id="triesDisplay">Tries: 0 / 10</div>
+  <div id="message"></div>
+  <div id="summaryBox"></div>
+
+  <div id="playerChoice">
+    <span>Play as:</span>
+    <button id="samePlayerBtn">Same Player</button>
+    <button id="nextPlayerBtn">Next Player</button>
+  </div>
+</div>
 
 <script>
-(() => {
-  const button = document.getElementById('timerButton');
-  const display = document.getElementById('timeDisplay');
-  const triesDisplay = document.getElementById('triesDisplay');
-  const message = document.getElementById('message');
-  const winSound = document.getElementById('winSound');
-  const failSound = document.getElementById('failSound');
+let running = false;
+let startTime = 0;
+let tries = 0;
+let results = []; // full history of current player
 
-  let running = false;
-  let startTime = 0;
-  let tries = 0;
-  let rafId = null;
+let playerNameValue = "";
+let playerMobileValue = ""; // stored but not displayed
 
-  function formatMs(ms){ return (ms/1000).toFixed(3) + ' s'; }
+const timerButton = document.getElementById('timerButton');
+const display = document.getElementById('timeDisplay');
+const triesDisplay = document.getElementById('triesDisplay');
+const message = document.getElementById('message');
+const summaryBox = document.getElementById('summaryBox');
 
-  function updateTimer(){
-    if(!running) return;
-    const elapsed = performance.now() - startTime;
-    display.textContent = (elapsed/1000).toFixed(3) + ' s';
-    rafId = requestAnimationFrame(updateTimer);
+const homeScreen = document.getElementById('homeScreen');
+const gameScreen = document.getElementById('gameScreen');
+const startButton = document.getElementById('startButton');
+const playerInfo = document.getElementById('playerInfo');
+
+const playerChoice = document.getElementById('playerChoice');
+const samePlayerBtn = document.getElementById('samePlayerBtn');
+const nextPlayerBtn = document.getElementById('nextPlayerBtn');
+
+// ⭐ HOME SCREEN → GAME START
+startButton.addEventListener("click", () => {
+    playerNameValue = document.getElementById("playerName").value.trim();
+    playerMobileValue = document.getElementById("playerMobile").value.trim();
+
+    if (!playerNameValue || !playerMobileValue) {
+        alert("Please enter both name and mobile number.");
+        return;
+    }
+
+    // Mobile number removed from display
+    playerInfo.innerHTML = `<b>Player:</b> ${playerNameValue}`;
+
+    homeScreen.style.display = "none";
+    gameScreen.style.display = "flex";
+});
+
+// ⭐ GAME LOGIC
+timerButton.addEventListener('click', () => {
+
+  if (tries >= 10 && timerButton.textContent === "Reset") {
+      // Reset UI only, retain results for same player
+      tries = 0;
+      triesDisplay.textContent = "Tries: 0 / 10";
+      message.textContent = "";
+      summaryBox.style.display = "none";
+      document.body.style.backgroundColor = "white";
+      timerButton.textContent = "Start";
+      display.textContent = "0.000 s";
+
+      // Show choice for same/next player
+      playerChoice.style.display = "block";
+      return;
   }
 
-  button.addEventListener('click', async () => {
-    // If we've hit max tries and button shows Reset, reset state
-    if(tries >= 10 && button.textContent.trim().toLowerCase() === 'reset'){
-      tries = 0;
-      display.textContent = '0.000 s';
-      triesDisplay.textContent = 'Tries: 0 / 10';
-      message.textContent = '';
-      document.body.style.backgroundColor = '#fff';
-      button.textContent = 'Start';
-      return;
-    }
+  if (tries >= 10) return;
 
-    // Prevent extra clicks after 10 tries (before reset)
-    if(tries >= 10) return;
+  if (!running) {
+    running = true;
+    startTime = performance.now();
+    display.textContent = "0.000 s";
+    timerButton.textContent = "Stop";
+    document.body.style.backgroundColor = "white";
+    requestAnimationFrame(updateTimer);
 
-    if(!running){
-      // start
-      running = true;
-      startTime = performance.now();
-      display.textContent = '0.000 s';
-      button.textContent = 'Stop';
-      document.body.style.backgroundColor = '#fff';
-      rafId = requestAnimationFrame(updateTimer);
-      // Ensure sounds are loaded so Safari considers them user-initiated
-      try{ await winSound.play().then(()=>winSound.pause(), ()=>{}); }catch(e){}
-      try{ await failSound.play().then(()=>failSound.pause(), ()=>{}); }catch(e){}
+  } else {
+    running = false;
+    tries++;
+
+    const elapsed = (performance.now() - startTime) / 1000;
+    const formatted = elapsed.toFixed(3);
+
+    results.push(parseFloat(formatted));
+
+    display.textContent = formatted + " s";
+    triesDisplay.textContent = "Tries: " + tries + " / 10";
+
+    if (formatted === "3.000") {
+        document.body.style.backgroundColor = "green";
+        timerButton.textContent = "You Win!";
     } else {
-      // stop
-      running = false;
-      if(rafId) cancelAnimationFrame(rafId);
-      const elapsed = (performance.now() - startTime) / 1000;
-      const formatted = elapsed.toFixed(3);
-      display.textContent = formatted + ' s';
-
-      tries++;
-      triesDisplay.textContent = 'Tries: ' + tries + ' / 10';
-
-      if(formatted === '3.000'){
-        document.body.style.backgroundColor = '#0bbf4a';
-        // play win sound (reset to start)
-        winSound.currentTime = 0;
-        winSound.play().catch(()=>{ /* play may be blocked if not gesture, but it's user gesture here */ });
-        button.textContent = 'You Win!';
-      } else {
-        document.body.style.backgroundColor = '#e33d3d';
-        failSound.currentTime = 0;
-        failSound.play().catch(()=>{});
-        button.textContent = 'Try Again';
-      }
-
-      if(tries >= 10){
-        message.textContent = 'Thanks for playing!';
-        button.textContent = 'Reset';
-        // lock further attempts until reset
-        running = false;
-      }
+        document.body.style.backgroundColor = "red";
+        timerButton.textContent = "Try Again";
     }
-  });
-})();
+
+    if (tries >= 10) {
+        timerButton.textContent = "Reset";
+        message.textContent = "Thanks for playing!";
+        showSummary();
+    }
+  }
+});
+
+function updateTimer() {
+  if (running) {
+    const elapsed = (performance.now() - startTime) / 1000;
+    display.textContent = elapsed.toFixed(3) + " s";
+    requestAnimationFrame(updateTimer);
+  }
+}
+
+function showSummary() {
+    if (results.length === 0) return;
+
+    let best = results.reduce((a, b) => {
+        return Math.abs(a - 3) < Math.abs(b - 3) ? a : b;
+    });
+
+    let list = "";
+    results.forEach((t, i) => {
+        list += `Try ${i+1}: ${t.toFixed(3)}s / 3.000s<br>`;
+    });
+
+    summaryBox.innerHTML =
+        `<b>Summary of All Tries (${playerNameValue})</b><br><br>
+         ${list}<br>
+         <b>Best Time:</b> ${best.toFixed(3)}s / 3.000s`;
+
+    summaryBox.style.display = "block";
+}
+
+// ⭐ SAME PLAYER → restart game, retain history
+samePlayerBtn.addEventListener('click', () => {
+  playerChoice.style.display = "none";
+  tries = 0;
+  triesDisplay.textContent = "Tries: 0 / 10";
+  message.textContent = "";
+  summaryBox.style.display = "block"; // show full history
+  display.textContent = "0.000 s";
+  timerButton.textContent = "Start";
+  document.body.style.backgroundColor = "white";
+});
+
+// ⭐ NEXT PLAYER → reset all, start fresh
+nextPlayerBtn.addEventListener('click', () => {
+  playerChoice.style.display = "none";
+  homeScreen.style.display = "block";
+  gameScreen.style.display = "none";
+  results = []; // clear history
+  tries = 0;
+  document.getElementById("playerName").value = "";
+  document.getElementById("playerMobile").value = "";
+});
 </script>
 
 </body>
