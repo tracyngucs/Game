@@ -7,29 +7,28 @@
 <style>
   body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
     background-color: white;
     font-family: sans-serif;
-    flex-direction: column;
   }
 
   #timerButton {
-    width: 270px; /* roughly half iPhone screen */
+    width: 270px;
     height: 270px;
-    border-radius: 135px; /* perfectly circular */
-    background: linear-gradient(to bottom, #ff4d4d, #b30000); /* 3D gradient */
+    border-radius: 135px;
+    background: linear-gradient(to bottom, #ff4d4d, #b30000);
     color: white;
-    font-size: 48px; /* proportional text */
+    font-size: 48px;
     border: none;
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.2);
     transition: transform 0.1s, box-shadow 0.1s;
   }
 
-  /* Button press effect */
   #timerButton:active {
     transform: translateY(4px);
     box-shadow: 0 4px 6px rgba(0,0,0,0.4);
@@ -37,7 +36,18 @@
 
   #timeDisplay {
     margin-top: 20px;
-    font-size: 48px; /* proportional to button */
+    font-size: 48px;
+  }
+
+  #triesDisplay {
+    margin-top: 15px;
+    font-size: 28px;
+  }
+
+  #message {
+    margin-top: 10px;
+    font-size: 26px;
+    color: #333;
   }
 </style>
 </head>
@@ -45,42 +55,73 @@
 
 <button id="timerButton">Start</button>
 <div id="timeDisplay">0.000 s</div>
+<div id="triesDisplay">Tries: 0 / 10</div>
+<div id="message"></div>
 
 <script>
-let running = false;
-let startTime = 0;
-let timerInterval;
-
-// Tiny inline beep sounds
+// Sounds (simple embedded beeps)
 const winSound = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=");
 const failSound = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=");
 
+let running = false;
+let startTime = 0;
+let tries = 0;
+
 const button = document.getElementById('timerButton');
 const display = document.getElementById('timeDisplay');
+const triesDisplay = document.getElementById('triesDisplay');
+const message = document.getElementById('message');
 
 button.addEventListener('click', () => {
+
+  // If reached 10 tries → Reset
+  if (tries >= 10 && button.textContent === "Reset") {
+      tries = 0;
+      triesDisplay.textContent = "Tries: 0 / 10";
+      message.textContent = "";
+      document.body.style.backgroundColor = "white";
+      button.textContent = "Start";
+      display.textContent = "0.000 s";
+      return;
+  }
+
+  // Prevent further attempts after 10
+  if (tries >= 10) return;
+
+  // Start timer
   if (!running) {
-    // Start timer
     running = true;
     startTime = performance.now();
-    display.textContent = '0.000 s';
-    button.textContent = 'Stop';
-    document.body.style.backgroundColor = 'white';
+    display.textContent = "0.000 s";
+    button.textContent = "Stop";
+    document.body.style.backgroundColor = "white";
     requestAnimationFrame(updateTimer);
+
   } else {
     // Stop timer
     running = false;
+    tries++;
+    triesDisplay.textContent = "Tries: " + tries + " / 10";
+
     const elapsed = (performance.now() - startTime) / 1000;
-    display.textContent = elapsed.toFixed(3) + ' s';
-    
-    if (elapsed.toFixed(3) === '3.000') {
-      document.body.style.backgroundColor = 'green';
-      winSound.play();
-      button.textContent = 'You Win! Start Again';
+    const formatted = elapsed.toFixed(3);
+    display.textContent = formatted + " s";
+
+    if (formatted === "3.000") {
+        document.body.style.backgroundColor = "green";
+        winSound.play();
+        button.textContent = "You Win!";
     } else {
-      document.body.style.backgroundColor = 'red';
-      failSound.play();
-      button.textContent = 'Try Again';
+        document.body.style.backgroundColor = "red";
+        failSound.play();
+        button.textContent = "Try Again";
+    }
+
+    // If reached 10 tries → lock and show reset
+    if (tries >= 10) {
+        message.textContent = "Thanks for playing!";
+        button.textContent = "Reset";
+        running = false;
     }
   }
 });
@@ -88,7 +129,7 @@ button.addEventListener('click', () => {
 function updateTimer() {
   if (running) {
     const elapsed = (performance.now() - startTime) / 1000;
-    display.textContent = elapsed.toFixed(3) + ' s';
+    display.textContent = elapsed.toFixed(3) + " s";
     requestAnimationFrame(updateTimer);
   }
 }
