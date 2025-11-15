@@ -41,7 +41,7 @@
   }
 
   /* GAME SCREEN */
-  #gameScreen, #endScreen {
+  #gameScreen {
     display: none;
     flex-direction: column;
     justify-content: center;
@@ -88,11 +88,36 @@
     color: #333;
   }
 
+  /* END SCREEN */
+  #endScreen {
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  #endContainer {
+    display: flex;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  #endContent {
+    flex: 1;
+    padding: 20px;
+  }
+
+  #endPlayerInfo {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  #endMessage {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
   #endSummaryBox {
-    margin-top: 20px;
-    width: 90%;
-    max-width: 400px;
-    max-height: 250px;
+    max-height: 300px;
     overflow-y: auto;
     border: 2px solid #444;
     border-radius: 10px;
@@ -120,6 +145,73 @@
   #playerChoiceEnd button:hover {
     background: #005fa3;
   }
+
+  #sidebarButton {
+    width: 40px;
+    height: 40px;
+    background: #333;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 20px;
+  }
+
+  #sidebarButton div {
+    width: 20px;
+    height: 3px;
+    background: white;
+    margin: 2px 0;
+  }
+
+  #sidebarButton:hover {
+    background: #555;
+  }
+
+  /* LEADERBOARD SCREEN */
+  #leaderboardScreen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  #leaderboardScreen h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  #leaderboardContent {
+    width: 100%;
+    max-width: 600px;
+    border: 2px solid #444;
+    border-radius: 10px;
+    padding: 15px;
+    background: #f7f7f7;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  #leaderboardButtons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #0077cc;
+    color: white;
+  }
+
+  #leaderboardButtons button:hover {
+    background: #005fa3;
+  }
+
 </style>
 </head>
 <body>
@@ -143,13 +235,32 @@
 
 <!-- END SCREEN -->
 <div id="endScreen">
-  <div id="endPlayerInfo"></div>
-  <div id="endMessage"></div>
-  <div id="endSummaryBox"></div>
-  <div id="playerChoiceEnd">
-    <span>Play as:</span>
-    <button id="samePlayerBtnEnd">Same Player</button>
-    <button id="nextPlayerBtnEnd">Next Player</button>
+  <div id="endContainer">
+    <div id="sidebarButton">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div id="endContent">
+      <div id="endPlayerInfo"></div>
+      <div id="endMessage"></div>
+      <div id="endSummaryBox"></div>
+      <div id="playerChoiceEnd">
+        <span>Play as:</span>
+        <button id="samePlayerBtnEnd">Same Player</button>
+        <button id="nextPlayerBtnEnd">Next Player</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD SCREEN -->
+<div id="leaderboardScreen">
+  <h1>Leaderboard</h1>
+  <div id="leaderboardContent"></div>
+  <div id="leaderboardButtons">
+    <button id="samePlayerLeaderboardBtn">Same Player</button>
+    <button id="nextPlayerLeaderboardBtn">Next Player</button>
   </div>
 </div>
 
@@ -158,7 +269,8 @@ let running = false;
 let startTime = 0;
 let tries = 0;
 let currentResults = [];
-let allResults = []; // accumulate all 10-round sessions
+let consolidatedResults = []; // keep all rounds for current player
+let allPlayerScores = []; // historical scores for all players
 
 let playerNameValue = "";
 let playerMobileValue = "";
@@ -166,6 +278,7 @@ let playerMobileValue = "";
 const homeScreen = document.getElementById('homeScreen');
 const gameScreen = document.getElementById('gameScreen');
 const endScreen = document.getElementById('endScreen');
+const leaderboardScreen = document.getElementById('leaderboardScreen');
 
 const playerInfo = document.getElementById('playerInfo');
 const timerButton = document.getElementById('timerButton');
@@ -179,6 +292,11 @@ const endSummaryBox = document.getElementById('endSummaryBox');
 const playerChoiceEnd = document.getElementById('playerChoiceEnd');
 const samePlayerBtnEnd = document.getElementById('samePlayerBtnEnd');
 const nextPlayerBtnEnd = document.getElementById('nextPlayerBtnEnd');
+const sidebarButton = document.getElementById('sidebarButton');
+
+const leaderboardContent = document.getElementById('leaderboardContent');
+const samePlayerLeaderboardBtn = document.getElementById('samePlayerLeaderboardBtn');
+const nextPlayerLeaderboardBtn = document.getElementById('nextPlayerLeaderboardBtn');
 
 const startButton = document.getElementById('startButton');
 
@@ -194,13 +312,17 @@ startButton.addEventListener("click", () => {
   triesDisplay.textContent = "Tries: 0 / 10";
   message.textContent = "";
   currentResults = [];
+  if (!consolidatedResults[playerNameValue]) consolidatedResults[playerNameValue] = [];
 });
 
 timerButton.addEventListener("click", () => {
   if (tries >= 10 && timerButton.textContent === "Reset") {
-    // Move to end screen and save session results
-    allResults.push([...currentResults]);
-    currentResults = [];
+    // save scores to history
+    currentResults.forEach(t => {
+      allPlayerScores.push({name: playerNameValue, time: t});
+      consolidatedResults[playerNameValue].push(t);
+    });
+
     gameScreen.style.display = "none";
     endScreen.style.display = "flex";
     endPlayerInfo.textContent = `Player: ${playerNameValue}`;
@@ -228,10 +350,7 @@ timerButton.addEventListener("click", () => {
     triesDisplay.textContent = "Tries: " + tries + " / 10";
     document.body.style.backgroundColor = (formatted === "3.000") ? "green" : "red";
     timerButton.textContent = (formatted === "3.000") ? "You Win!" : "Try Again";
-    if (tries >= 10) {
-      timerButton.textContent = "Reset";
-      message.textContent = "Thanks for playing!";
-    }
+    if (tries >= 10) timerButton.textContent = "Reset";
   }
 });
 
@@ -245,15 +364,20 @@ function updateTimer() {
 
 function showEndSummary() {
   endSummaryBox.innerHTML = "";
-  allResults.forEach((session, sIndex) => {
-    let best = session.reduce((a,b)=>Math.abs(a-3)<Math.abs(b-3)?a:b);
-    let list = "";
-    session.forEach((t,i)=>list += `Try ${i+1}: ${t.toFixed(3)}s / 3.000s<br>`);
-    endSummaryBox.innerHTML += `<b>Session ${sIndex+1}</b><br>${list}<b>Best Time:</b> ${best.toFixed(3)}s / 3.000s<br><br>`;
-  });
+  const allResults = consolidatedResults[playerNameValue];
+  if (!allResults || allResults.length === 0) return;
+  const bestTime = allResults.reduce((a,b)=>Math.abs(a-3)<Math.abs(b-3)?a:b);
+  allResults.forEach((t,i)=>endSummaryBox.innerHTML += `Try ${i+1}: ${t.toFixed(3)} s<br>`);
+  endSummaryBox.innerHTML += `<br><b>Best Time (closest to 3s):</b> ${bestTime.toFixed(3)} s`;
 }
 
-// SAME PLAYER → start new 10-round session
+function populateLeaderboard() {
+  const sortedScores = [...allPlayerScores].sort((a,b)=>Math.abs(a.time-3)-Math.abs(b.time-3));
+  const top10 = sortedScores.slice(0,10);
+  leaderboardContent.innerHTML = "";
+  top10.forEach((p,i)=>leaderboardContent.innerHTML += `${i+1}. ${p.name}: ${p.time.toFixed(3)} s<br>`);
+}
+
 samePlayerBtnEnd.addEventListener("click", () => {
   endScreen.style.display = "none";
   gameScreen.style.display = "flex";
@@ -262,17 +386,41 @@ samePlayerBtnEnd.addEventListener("click", () => {
   triesDisplay.textContent = "Tries: 0 / 10";
   message.textContent = "";
   currentResults = [];
-  document.body.style.backgroundColor = "white";
   timerButton.textContent = "Start";
+  document.body.style.backgroundColor = "white";
 });
 
-// NEXT PLAYER → reset everything
 nextPlayerBtnEnd.addEventListener("click", () => {
   endScreen.style.display = "none";
   homeScreen.style.display = "flex";
-  results = [];
   currentResults = [];
-  allResults = [];
+  tries = 0;
+  document.getElementById("playerName").value = "";
+  document.getElementById("playerMobile").value = "";
+});
+
+sidebarButton.addEventListener("click", () => {
+  endScreen.style.display = "none";
+  leaderboardScreen.style.display = "flex";
+  populateLeaderboard();
+});
+
+samePlayerLeaderboardBtn.addEventListener("click", () => {
+  leaderboardScreen.style.display = "none";
+  gameScreen.style.display = "flex";
+  tries = 0;
+  display.textContent = "0.000 s";
+  triesDisplay.textContent = "Tries: 0 / 10";
+  message.textContent = "";
+  currentResults = [];
+  timerButton.textContent = "Start";
+  document.body.style.backgroundColor = "white";
+});
+
+nextPlayerLeaderboardBtn.addEventListener("click", () => {
+  leaderboardScreen.style.display = "none";
+  homeScreen.style.display = "flex";
+  currentResults = [];
   tries = 0;
   document.getElementById("playerName").value = "";
   document.getElementById("playerMobile").value = "";
