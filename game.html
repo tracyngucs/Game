@@ -148,17 +148,21 @@
   </div>
 </div>
 
-<!-- BUZZ SOUND -->
+<!-- SOUNDS -->
 <audio id="buzzSound" preload="auto">
   <source src="fail-buzzer-04.wav" type="audio/wav">
+</audio>
+
+<audio id="cheerSound" preload="auto">
+  <source src="Kids Cheer.wav" type="audio/wav">
 </audio>
 
 <script>
 let running = false;
 let startTime = 0;
 let tries = 0;
-let results = []; // full history for current player
-let allPlayers = {}; // all players' historical results
+let results = [];
+let allPlayers = {};
 
 let playerNameValue = "";
 let playerMobileValue = "";
@@ -177,7 +181,9 @@ const playerInfo = document.getElementById('playerInfo');
 const playerChoice = document.getElementById('playerChoice');
 const samePlayerBtn = document.getElementById('samePlayerBtn');
 const nextPlayerBtn = document.getElementById('nextPlayerBtn');
+
 const buzz = document.getElementById('buzzSound');
+const cheer = document.getElementById('cheerSound');
 
 // ⭐ HOME SCREEN → GAME START
 startButton.addEventListener("click", () => {
@@ -208,11 +214,7 @@ timerButton.addEventListener('click', () => {
       summaryBox.style.display = "none";
       document.body.style.backgroundColor = "white";
       timerButton.textContent = "Start";
-
-      // clear results in this choice screen
       display.textContent = "0.000 s";
-
-      // Show choice for same/next player
       playerChoice.style.display = "block";
       return;
   }
@@ -242,11 +244,11 @@ timerButton.addEventListener('click', () => {
     if (formatted === 3.000) {
         document.body.style.backgroundColor = "green";
         timerButton.textContent = "You Win!";
+        cheer.currentTime = 0;
+        cheer.play();
     } else {
         document.body.style.backgroundColor = "red";
         timerButton.textContent = "Try Again";
-
-        // play buzz sound
         buzz.currentTime = 0;
         buzz.play();
     }
@@ -295,7 +297,7 @@ samePlayerBtn.addEventListener('click', () => {
   message.textContent = "";
   display.textContent = "0.000 s";
   timerButton.textContent = "Start";
-  summaryBox.style.display = "block"; // show full history
+  summaryBox.style.display = "block";
 });
 
 // ⭐ NEXT PLAYER → reset all, start fresh
