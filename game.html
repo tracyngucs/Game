@@ -1,3 +1,5 @@
+Previous:
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -306,211 +308,186 @@
 </audio>
 
 <script>
-    let running = false;
-    let startTime = 0;
-    let tries = 0;
-    let currentResults = [];
-    let allPlayerScores = [];
-    let consolidatedResults = {};
+let running = false;
+let startTime = 0;
+let tries = 0;
+let currentResults = [];
+let allPlayerScores = [];
+let consolidatedResults = {};
 
-    let playerNameValue = "";
-    let playerMobileValue = "";
+let playerNameValue = "";
+let playerMobileValue = "";
 
-    const homeScreen = document.getElementById('homeScreen');
-    const gameScreen = document.getElementById('gameScreen');
-    const endScreen = document.getElementById('endScreen');
-    const leaderboardScreen = document.getElementById('leaderboardScreen');
+const homeScreen = document.getElementById('homeScreen');
+const gameScreen = document.getElementById('gameScreen');
+const endScreen = document.getElementById('endScreen');
+const leaderboardScreen = document.getElementById('leaderboardScreen');
 
-    const playerInfo = document.getElementById('playerInfo');
-    const timerButton = document.getElementById('timerButton');
-    const display = document.getElementById('timeDisplay');
-    const triesDisplay = document.getElementById('triesDisplay');
-    const message = document.getElementById('message');
-    const summaryBox = document.getElementById('summaryBox');
+const playerInfo = document.getElementById('playerInfo');
+const timerButton = document.getElementById('timerButton');
+const display = document.getElementById('timeDisplay');
+const triesDisplay = document.getElementById('triesDisplay');
+const message = document.getElementById('message');
+const summaryBox = document.getElementById('summaryBox');
 
-    const endPlayerInfo = document.getElementById('endPlayerInfo');
-    const endMessage = document.getElementById('endMessage');
-    const endSummaryBox = document.getElementById('endSummaryBox');
-    const playerChoiceEnd = document.getElementById('playerChoiceEnd');
-    const samePlayerBtnEnd = document.getElementById('samePlayerBtnEnd');
-    const nextPlayerBtnEnd = document.getElementById('nextPlayerBtnEnd');
-    const sidebarButton = document.getElementById('sidebarButton');
+const endPlayerInfo = document.getElementById('endPlayerInfo');
+const endMessage = document.getElementById('endMessage');
+const endSummaryBox = document.getElementById('endSummaryBox');
+const playerChoiceEnd = document.getElementById('playerChoiceEnd');
+const samePlayerBtnEnd = document.getElementById('samePlayerBtnEnd');
+const nextPlayerBtnEnd = document.getElementById('nextPlayerBtnEnd');
+const sidebarButton = document.getElementById('sidebarButton');
 
-    const leaderboardContent = document.getElementById('leaderboardContent');
-    const samePlayerLeaderboardBtn = document.getElementById('samePlayerLeaderboardBtn');
-    const nextPlayerLeaderboardBtn = document.getElementById('nextPlayerLeaderboardBtn');
+const leaderboardContent = document.getElementById('leaderboardContent');
+const samePlayerLeaderboardBtn = document.getElementById('samePlayerLeaderboardBtn');
+const nextPlayerLeaderboardBtn = document.getElementById('nextPlayerLeaderboardBtn');
 
-    const startButton = document.getElementById('startButton');
+const startButton = document.getElementById('startButton');
 
-    const buzz = document.getElementById('buzzSound');
-    const cheer = document.getElementById('cheerSound');
+const buzz = document.getElementById('buzzSound');
+const cheer = document.getElementById('cheerSound');
 
-    // ⭐ NEW: Function to send score to Google Sheet
-    **
-    function sendScoreToSheet(name, mobile, time) {
-        const url = "https://script.google.com/macros/s/AKfycbxTgXrMkrNuU2sq_0mLkssQuKa011O1nGIIu-0P1zlmK-Y9wc4pWkHes759ihjp9RtxCg/exec";
-        fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: name,
-                    mobile: mobile,
-                    time: time
-                })
-            })
-            .then(response => response.json())
-            .then(data => console.log("Sheet response:", data))
-            .catch(error => console.error("Error sending to sheet:", error));
-    } **
+// ⭐ HOME SCREEN → GAME START
+startButton.addEventListener("click", () => {
+    playerNameValue = document.getElementById("playerName").value.trim();
+    playerMobileValue = document.getElementById("playerMobile").value.trim();
+    if(!playerNameValue || !playerMobileValue){
+        alert("Please enter both name and mobile number.");
+        return;
+    }
+    playerInfo.textContent = `Player: ${playerNameValue}`;
+    homeScreen.style.display = "none";
+    gameScreen.style.display = "flex";
+    tries = 0;
+    display.textContent = "0.000 s";
+    triesDisplay.textContent = "Tries: 0 / 10";
+    message.textContent = "";
+    summaryBox.style.display = "none";
+    currentResults = [];
+    if(!consolidatedResults[playerNameValue]) consolidatedResults[playerNameValue] = [];
+});
 
-    // ⭐ HOME SCREEN → GAME START
-    startButton.addEventListener("click", () => {
-        playerNameValue = document.getElementById("playerName").value.trim();
-        playerMobileValue = document.getElementById("playerMobile").value.trim();
-        if (!playerNameValue || !playerMobileValue) {
-            alert("Please enter both name and mobile number.");
-            return;
-        }
-        playerInfo.textContent = `Player: ${playerNameValue}`;
-        homeScreen.style.display = "none";
-        gameScreen.style.display = "flex";
-        tries = 0;
+// ⭐ GAME LOGIC
+timerButton.addEventListener("click", () => {
+    if(tries >= 10 && timerButton.textContent === "Reset"){
+        // save current results
+        currentResults.forEach(t=>{
+            allPlayerScores.push({name: playerNameValue, time: t});
+            consolidatedResults[playerNameValue].push(t);
+        });
+        gameScreen.style.display = "none";
+        endScreen.style.display = "flex";
+        endPlayerInfo.textContent = `Player: ${playerNameValue}`;
+        endMessage.textContent = "Thanks for playing!";
+        showEndSummary();
+        return;
+    }
+
+    if(tries >= 10) return;
+
+    if(!running){
+        running = true;
+        startTime = performance.now();
         display.textContent = "0.000 s";
-        triesDisplay.textContent = "Tries: 0 / 10";
-        message.textContent = "";
-        summaryBox.style.display = "none";
-        currentResults = [];
-        if (!consolidatedResults[playerNameValue]) consolidatedResults[playerNameValue] = [];
-    });
-
-    // ⭐ GAME LOGIC
-    timerButton.addEventListener("click", () => {
-        if (tries >= 10 && timerButton.textContent === "Reset") {
-            currentResults.forEach(t => {
-                allPlayerScores.push({
-                    name: playerNameValue,
-                    time: t
-                });
-                consolidatedResults[playerNameValue].push(t); **
-                sendScoreToSheet(playerNameValue, playerMobileValue, t); // ⭐ NEW: send each score to Google Sheet**
-            });
-            gameScreen.style.display = "none";
-            endScreen.style.display = "flex";
-            endPlayerInfo.textContent = `Player: ${playerNameValue}`;
-            endMessage.textContent = "Thanks for playing!";
-            showEndSummary();
-            return;
-        }
-
-        if (tries >= 10) return;
-
-        if (!running) {
-            running = true;
-            startTime = performance.now();
-            display.textContent = "0.000 s";
-            timerButton.textContent = "Stop";
-            document.body.style.backgroundColor = "white";
-            requestAnimationFrame(updateTimer);
+        timerButton.textContent = "Stop";
+        document.body.style.backgroundColor = "white";
+        requestAnimationFrame(updateTimer);
+    } else {
+        running = false;
+        tries++;
+        const elapsed = (performance.now() - startTime)/1000;
+        const formatted = parseFloat(elapsed.toFixed(3));
+        currentResults.push(formatted);
+        display.textContent = formatted.toFixed(3) + " s";
+        triesDisplay.textContent = "Tries: " + tries + " / 10";
+        if(formatted === 3.000){
+            document.body.style.backgroundColor = "green";
+            timerButton.textContent = "You Win!";
+            cheer.currentTime=0; cheer.play();
         } else {
-            running = false;
-            tries++;
-            const elapsed = (performance.now() - startTime) / 1000;
-            const formatted = parseFloat(elapsed.toFixed(3));
-            currentResults.push(formatted);
-            display.textContent = formatted.toFixed(3) + " s";
-            triesDisplay.textContent = "Tries: " + tries + " / 10";
-            if (formatted === 3.000) {
-                document.body.style.backgroundColor = "green";
-                timerButton.textContent = "You Win!";
-                cheer.currentTime = 0;
-                cheer.play();
-            } else {
-                document.body.style.backgroundColor = "red";
-                timerButton.textContent = "Try Again";
-                buzz.currentTime = 0;
-                buzz.play();
-            }
-            if (tries >= 10) timerButton.textContent = "Reset";
+            document.body.style.backgroundColor = "red";
+            timerButton.textContent = "Try Again";
+            buzz.currentTime=0; buzz.play();
         }
-    });
-
-    function updateTimer() {
-        if (running) {
-            const elapsed = (performance.now() - startTime) / 1000;
-            display.textContent = elapsed.toFixed(3) + " s";
-            requestAnimationFrame(updateTimer);
-        }
+        if(tries >= 10) timerButton.textContent = "Reset";
     }
+});
 
-    function showEndSummary() {
-        const allResults = consolidatedResults[playerNameValue];
-        endSummaryBox.innerHTML = "";
-        if (!allResults || allResults.length === 0) return;
-        const bestTime = allResults.reduce((a, b) => Math.abs(a - 3) < Math.abs(b - 3) ? a : b);
-        allResults.forEach((t, i) => endSummaryBox.innerHTML += `Try ${i+1}: ${t.toFixed(3)} s<br>`);
-        endSummaryBox.innerHTML += `<br><b>Best Time (closest to 3s):</b> ${bestTime.toFixed(3)} s`;
+function updateTimer(){
+    if(running){
+        const elapsed = (performance.now() - startTime)/1000;
+        display.textContent = elapsed.toFixed(3) + " s";
+        requestAnimationFrame(updateTimer);
     }
+}
 
-    // ⭐ SAME PLAYER / NEXT PLAYER
-    samePlayerBtnEnd.addEventListener("click", () => {
-        endScreen.style.display = "none";
-        gameScreen.style.display = "flex";
-        tries = 0;
-        display.textContent = "0.000 s";
-        triesDisplay.textContent = "Tries: 0 / 10";
-        message.textContent = "";
-        currentResults = [];
-        summaryBox.style.display = "none";
-        timerButton.textContent = "Start";
-        document.body.style.backgroundColor = "white";
-    });
+function showEndSummary(){
+    const allResults = consolidatedResults[playerNameValue];
+    endSummaryBox.innerHTML = "";
+    if(!allResults || allResults.length===0) return;
+    const bestTime = allResults.reduce((a,b)=> Math.abs(a-3)<Math.abs(b-3)?a:b );
+    allResults.forEach((t,i)=> endSummaryBox.innerHTML+=`Try ${i+1}: ${t.toFixed(3)} s<br>`);
+    endSummaryBox.innerHTML+=`<br><b>Best Time (closest to 3s):</b> ${bestTime.toFixed(3)} s`;
+}
 
-    nextPlayerBtnEnd.addEventListener("click", () => {
-        endScreen.style.display = "none";
-        homeScreen.style.display = "flex";
-        currentResults = [];
-        tries = 0;
-        document.getElementById("playerName").value = "";
-        document.getElementById("playerMobile").value = "";
-    });
+// ⭐ SAME PLAYER / NEXT PLAYER
+samePlayerBtnEnd.addEventListener("click", ()=>{
+    endScreen.style.display="none";
+    gameScreen.style.display="flex";
+    tries=0;
+    display.textContent="0.000 s";
+    triesDisplay.textContent="Tries: 0 / 10";
+    message.textContent="";
+    currentResults=[];
+    summaryBox.style.display="none";
+    timerButton.textContent="Start";
+    document.body.style.backgroundColor="white";
+});
 
-    // ⭐ SIDEBAR → LEADERBOARD
-    sidebarButton.addEventListener("click", () => {
-        endScreen.style.display = "none";
-        leaderboardScreen.style.display = "flex";
-        populateLeaderboard();
-    });
+nextPlayerBtnEnd.addEventListener("click", ()=>{
+    endScreen.style.display="none";
+    homeScreen.style.display="flex";
+    currentResults=[];
+    tries=0;
+    document.getElementById("playerName").value="";
+    document.getElementById("playerMobile").value="";
+});
 
-    function populateLeaderboard() {
-        const sorted = [...allPlayerScores].sort((a, b) => Math.abs(a.time - 3) - Math.abs(b.time - 3));
-        const top10 = sorted.slice(0, 10);
-        leaderboardContent.innerHTML = "";
-        top10.forEach((p, i) => leaderboardContent.innerHTML += `${i+1}. ${p.name}: ${p.time.toFixed(3)} s<br>`);
-    }
+// ⭐ SIDEBAR → LEADERBOARD
+sidebarButton.addEventListener("click", ()=>{
+    endScreen.style.display="none";
+    leaderboardScreen.style.display="flex";
+    populateLeaderboard();
+});
 
-    // ⭐ LEADERBOARD BUTTONS
-    samePlayerLeaderboardBtn.addEventListener("click", () => {
-        leaderboardScreen.style.display = "none";
-        gameScreen.style.display = "flex";
-        tries = 0;
-        display.textContent = "0.000 s";
-        triesDisplay.textContent = "Tries: 0 / 10";
-        message.textContent = "";
-        currentResults = [];
-        timerButton.textContent = "Start";
-        document.body.style.backgroundColor = "white";
-    });
+function populateLeaderboard(){
+    const sorted = [...allPlayerScores].sort((a,b)=>Math.abs(a.time-3)-Math.abs(b.time-3));
+    const top10 = sorted.slice(0,10);
+    leaderboardContent.innerHTML="";
+    top10.forEach((p,i)=> leaderboardContent.innerHTML+=`${i+1}. ${p.name}: ${p.time.toFixed(3)} s<br>`);
+}
 
-    nextPlayerLeaderboardBtn.addEventListener("click", () => {
-        leaderboardScreen.style.display = "none";
-        homeScreen.style.display = "flex";
-        currentResults = [];
-        tries = 0;
-        document.getElementById("playerName").value = "";
-        document.getElementById("playerMobile").value = "";
-    });
+// ⭐ LEADERBOARD BUTTONS
+samePlayerLeaderboardBtn.addEventListener("click", ()=>{
+    leaderboardScreen.style.display="none";
+    gameScreen.style.display="flex";
+    tries=0;
+    display.textContent="0.000 s";
+    triesDisplay.textContent="Tries: 0 / 10";
+    message.textContent="";
+    currentResults=[];
+    timerButton.textContent="Start";
+    document.body.style.backgroundColor="white";
+});
+
+nextPlayerLeaderboardBtn.addEventListener("click", ()=>{
+    leaderboardScreen.style.display="none";
+    homeScreen.style.display="flex";
+    currentResults=[];
+    tries=0;
+    document.getElementById("playerName").value="";
+    document.getElementById("playerMobile").value="";
+});
 </script>
 
 </body>
