@@ -1,309 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Appointed Time</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  body {
-    font-family: sans-serif;
-    margin: 0;
-    background: white;
-  }
+    <meta charset="UTF-8">
+    <title>Appointed Time</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: sans-serif; margin: 0; background: white; }
 
-  /* HOME SCREEN */
-  #homeScreen {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+        #homeScreen { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
+        #homeScreen input { padding: 12px; font-size: 20px; width: 280px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #aaa; }
+        #startButton { padding: 14px 30px; font-size: 22px; background: #0077cc; color: white; border: none; border-radius: 10px; cursor: pointer; }
 
-  #homeScreen input {
-    padding: 12px;
-    font-size: 20px;
-    width: 280px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    border: 1px solid #aaa;
-  }
+        #gameScreen { display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        #playerInfo { font-size: 22px; margin-bottom: 20px; }
+        #timerButton { width: 300px; height: 300px; border-radius: 150px; background: linear-gradient(to bottom, #ff4d4d, #b30000); color: white; font-size: 48px; border: none; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.2); transition: transform 0.1s, box-shadow 0.1s; }
+        #timerButton:active { transform: translateY(4px); box-shadow: 0 4px 6px rgba(0,0,0,0.4); }
+        #timeDisplay { margin-top: 20px; font-size: 36px; }
+        #triesDisplay { margin-top: 10px; font-size: 24px; }
+        #message { margin-top: 10px; font-size: 22px; color: #333; }
+        #summaryBox { margin-top: 20px; padding: 15px; width: 80%; max-width: 400px; max-height: 300px; overflow-y: auto; border: 2px solid #444; border-radius: 10px;
+            font-size: 18px; background: #f7f7f7; display: none; text-align: left; }
 
-  #startButton {
-    padding: 14px 30px;
-    font-size: 22px;
-    background: #0077cc;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-  }
+        #endScreen { display: none; flex-direction: column; padding: 20px; }
+        #endContainer { display: flex; width: 100%; max-width: 800px; }
+        #sidebarButton { width: 40px; height: 40px; background: #333; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;
+            border-radius: 4px; margin-right: 20px; }
+        #sidebarButton div { width: 20px; height: 3px; background: white; margin: 2px 0; }
+        #sidebarButton:hover { background: #555; }
 
-  /* GAME SCREEN */
-  #gameScreen {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
+        #endContent { flex: 1; padding: 20px; }
+        #endPlayerInfo { font-size: 22px; margin-bottom: 10px; }
+        #endMessage { font-size: 20px; margin-bottom: 10px; }
+        #endSummaryBox { max-height: 300px; overflow-y: auto; border: 2px solid #444; border-radius: 10px; padding: 10px; font-size: 18px; background: #f7f7f7; text-align: left; }
 
-  #playerInfo {
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
+        #playerChoiceEnd { margin-top: 20px; }
+        #playerChoiceEnd span { font-size: 18px; margin-right: 10px; }
+        #playerChoiceEnd button { margin: 0 10px; padding: 10px 20px; font-size: 18px; border-radius: 8px; border: none; cursor: pointer; background: #0077cc; color: white; }
+        #playerChoiceEnd button:hover { background: #005fa3; }
 
-  #timerButton {
-    width: 300px;
-    height: 300px;
-    border-radius: 150px;
-    background: linear-gradient(to bottom, #ff4d4d, #b30000);
-    color: white;
-    font-size: 48px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.2);
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
+        #leaderboardScreen { display: none; flex-direction: column; align-items: center; padding: 20px; }
+        #leaderboardScreen h1 { font-size: 28px; margin-bottom: 20px; }
+        #leaderboardContent { width: 100%; max-width: 600px; border: 2px solid #444; border-radius: 10px; padding: 15px; background: #f7f7f7; max-height: 400px; overflow-y: auto; margin-bottom: 20px; text-align: left; }
 
-  #timerButton:active {
-    transform: translateY(4px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.4);
-  }
+        #leaderboardButtons { display: flex; align-items: center; }
+        #leaderboardButtons span { font-size: 18px; margin-right: 10px; }
+        #leaderboardButtons button { margin: 0 10px; padding: 10px 20px; font-size: 18px; border-radius: 8px; border: none; cursor: pointer; background: #0077cc; color: white; }
+        #leaderboardButtons button:hover { background: #005fa3; }
 
-  #timeDisplay {
-    margin-top: 20px;
-    font-size: 36px;
-  }
-
-  #triesDisplay {
-    margin-top: 10px;
-    font-size: 24px;
-  }
-
-  #message {
-    margin-top: 10px;
-    font-size: 22px;
-    color: #333;
-  }
-
-  /* SUMMARY BOX */
-  #summaryBox {
-    margin-top: 20px;
-    padding: 15px;
-    width: 80%;
-    max-width: 400px;
-    max-height: 300px;
-    overflow-y: auto;
-    border: 2px solid #444;
-    border-radius: 10px;
-    font-size: 18px;
-    background: #f7f7f7;
-    display: none;
-    text-align: left;
-  }
-
-  /* END SCREEN WITH SIDEBAR */
-  #endScreen {
-    display: none;
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  #endContainer {
-    display: flex;
-    width: 100%;
-    max-width: 800px;
-  }
-
-  #sidebarButton {
-    width: 40px;
-    height: 40px;
-    background: #333;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-right: 20px;
-  }
-
-  #sidebarButton div {
-    width: 20px;
-    height: 3px;
-    background: white;
-    margin: 2px 0;
-  }
-
-  #sidebarButton:hover {
-    background: #555;
-  }
-
-  #endContent {
-    flex: 1;
-    padding: 20px;
-  }
-
-  #endPlayerInfo {
-    font-size: 22px;
-    margin-bottom: 10px;
-  }
-
-  #endMessage {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-
-  #endSummaryBox {
-    max-height: 300px;
-    overflow-y: auto;
-    border: 2px solid #444;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 18px;
-    background: #f7f7f7;
-    text-align: left;
-  }
-
-  #playerChoiceEnd {
-    margin-top: 20px;
-  }
-
-  #playerChoiceEnd span {
-    font-size: 18px;
-    margin-right: 10px;
-  }
-
-  #playerChoiceEnd button {
-    margin: 0 10px;
-    padding: 10px 20px;
-    font-size: 18px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    background: #0077cc;
-    color: white;
-  }
-
-  #playerChoiceEnd button:hover {
-    background: #005fa3;
-  }
-
-  /* LEADERBOARD SCREEN */
-  #leaderboardScreen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-
-  #leaderboardScreen h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-
-  #leaderboardContent {
-    width: 100%;
-    max-width: 600px;
-    border: 2px solid #444;
-    border-radius: 10px;
-    padding: 15px;
-    background: #f7f7f7;
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    text-align: left;
-  }
-
-  #leaderboardButtons {
-    display: flex;
-    align-items: center;
-  }
-
-  #leaderboardButtons span {
-    font-size: 18px;
-    margin-right: 10px;
-  }
-
-  #leaderboardButtons button {
-    margin: 0 10px;
-    padding: 10px 20px;
-    font-size: 18px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    background: #0077cc;
-    color: white;
-  }
-
-  #leaderboardButtons button:hover {
-    background: #005fa3;
-  }
-</style>
+        /* ⭐ NEW BUTTON FOR CSV DOWNLOAD */
+        **#exportCSVBtn { margin-top: 20px; padding: 10px 20px; font-size: 18px; background: #009900; color: white; border: none; border-radius: 8px; cursor: pointer; }**
+        **#exportCSVBtn:hover { background: #007700; }**
+    </style>
 </head>
+
 <body>
 
-<!-- HOME SCREEN -->
-<div id="homeScreen">
-  <h1>Appointed Time</h1>
-  <input type="text" id="playerName" placeholder="Enter Name" /><br>
-  <input type="tel" id="playerMobile" placeholder="Enter Mobile Number" /><br>
-  <button id="startButton">Start Now</button>
-</div>
-
-<!-- GAME SCREEN -->
-<div id="gameScreen">
-  <div id="playerInfo"></div>
-  <button id="timerButton">Start</button>
-  <div id="timeDisplay">0.000 s</div>
-  <div id="triesDisplay">Tries: 0 / 10</div>
-  <div id="message"></div>
-  <div id="summaryBox"></div>
-</div>
-
-<!-- END SCREEN -->
-<div id="endScreen">
-  <div id="endContainer">
-    <div id="sidebarButton">
-      <div></div>
-      <div></div>
-      <div></div>
+    <!-- HOME SCREEN -->
+    <div id="homeScreen">
+        <h1>Appointed Time</h1>
+        <input type="text" id="playerName" placeholder="Enter Name" /><br>
+        <input type="tel" id="playerMobile" placeholder="Enter Mobile Number" /><br>
+        <button id="startButton">Start Now</button>
     </div>
-    <div id="endContent">
-      <div id="endPlayerInfo"></div>
-      <div id="endMessage"></div>
-      <div id="endSummaryBox"></div>
-      <div id="playerChoiceEnd">
-        <span>Play as:</span>
-        <button id="samePlayerBtnEnd">Same Player</button>
-        <button id="nextPlayerBtnEnd">Next Player</button>
-      </div>
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen">
+        <div id="playerInfo"></div>
+        <button id="timerButton">Start</button>
+        <div id="timeDisplay">0.000 s</div>
+        <div id="triesDisplay">Tries: 0 / 10</div>
+        <div id="message"></div>
+        <div id="summaryBox"></div>
     </div>
-  </div>
-</div>
 
-<!-- LEADERBOARD SCREEN -->
-<div id="leaderboardScreen">
-  <h1>Leaderboard</h1>
-  <div id="leaderboardContent"></div>
-  <div id="leaderboardButtons">
-    <span>Play as:</span>
-    <button id="samePlayerLeaderboardBtn">Same Player</button>
-    <button id="nextPlayerLeaderboardBtn">Next Player</button>
-  </div>
-</div>
+    <!-- END SCREEN -->
+    <div id="endScreen">
+        <div id="endContainer">
+            <div id="sidebarButton">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div id="endContent">
+                <div id="endPlayerInfo"></div>
+                <div id="endMessage"></div>
+                <div id="endSummaryBox"></div>
+                <div id="playerChoiceEnd">
+                    <span>Play as:</span>
+                    <button id="samePlayerBtnEnd">Same Player</button>
+                    <button id="nextPlayerBtnEnd">Next Player</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!-- SOUNDS -->
-<audio id="buzzSound" preload="auto">
-  <source src="fail-buzzer-04.wav" type="audio/wav">
-</audio>
+    <!-- LEADERBOARD SCREEN -->
+    <div id="leaderboardScreen">
+        <h1>Leaderboard</h1>
+        <div id="leaderboardContent"></div>
 
-<audio id="cheerSound" preload="auto">
-  <source src="Kids Cheer.wav" type="audio/wav">
-</audio>
+        <div id="leaderboardButtons">
+            <span>Play as:</span>
+            <button id="samePlayerLeaderboardBtn">Same Player</button>
+            <button id="nextPlayerLeaderboardBtn">Next Player</button>
+        </div>
+
+        <!-- ⭐ NEW CSV EXPORT BUTTON -->
+        **<button id="exportCSVBtn">Export CSV</button>**
+    </div>
+
+    <!-- SOUNDS -->
+    <audio id="buzzSound" preload="auto">
+        <source src="fail-buzzer-04.wav" type="audio/wav">
+    </audio>
+
+    <audio id="cheerSound" preload="auto">
+        <source src="Kids Cheer.wav" type="audio/wav">
+    </audio>
 
 <script>
 let running = false;
@@ -331,7 +146,7 @@ const summaryBox = document.getElementById('summaryBox');
 const endPlayerInfo = document.getElementById('endPlayerInfo');
 const endMessage = document.getElementById('endMessage');
 const endSummaryBox = document.getElementById('endSummaryBox');
-const playerChoiceEnd = document.getElementById('playerChoiceEnd');
+
 const samePlayerBtnEnd = document.getElementById('samePlayerBtnEnd');
 const nextPlayerBtnEnd = document.getElementById('nextPlayerBtnEnd');
 const sidebarButton = document.getElementById('sidebarButton');
@@ -345,34 +160,49 @@ const startButton = document.getElementById('startButton');
 const buzz = document.getElementById('buzzSound');
 const cheer = document.getElementById('cheerSound');
 
-// ⭐ HOME SCREEN → GAME START
+/* ---------------------------------------------------- */
+/* HOME SCREEN → GAME SCREEN */
+/* ---------------------------------------------------- */
 startButton.addEventListener("click", () => {
     playerNameValue = document.getElementById("playerName").value.trim();
     playerMobileValue = document.getElementById("playerMobile").value.trim();
-    if(!playerNameValue || !playerMobileValue){
+
+    if (!playerNameValue || !playerMobileValue) {
         alert("Please enter both name and mobile number.");
         return;
     }
+
     playerInfo.textContent = `Player: ${playerNameValue}`;
     homeScreen.style.display = "none";
     gameScreen.style.display = "flex";
+
     tries = 0;
     display.textContent = "0.000 s";
     triesDisplay.textContent = "Tries: 0 / 10";
     message.textContent = "";
     summaryBox.style.display = "none";
     currentResults = [];
-    if(!consolidatedResults[playerNameValue]) consolidatedResults[playerNameValue] = [];
+
+    if (!consolidatedResults[playerNameValue]) consolidatedResults[playerNameValue] = [];
 });
 
-// ⭐ GAME LOGIC
+/* ---------------------------------------------------- */
+/* GAME LOGIC */
+/* ---------------------------------------------------- */
 timerButton.addEventListener("click", () => {
-    if(tries >= 10 && timerButton.textContent === "Reset"){
-        // save current results
-        currentResults.forEach(t=>{
-            allPlayerScores.push({name: playerNameValue, time: t});
+
+    if (tries >= 10 && timerButton.textContent === "Reset") {
+
+        currentResults.forEach(t => {
+            allPlayerScores.push({
+                name: playerNameValue,
+                mobile: playerMobileValue,
+                time: t,
+                timestamp: new Date().toLocaleString()
+            });
             consolidatedResults[playerNameValue].push(t);
         });
+
         gameScreen.style.display = "none";
         endScreen.style.display = "flex";
         endPlayerInfo.textContent = `Player: ${playerNameValue}`;
@@ -381,9 +211,9 @@ timerButton.addEventListener("click", () => {
         return;
     }
 
-    if(tries >= 10) return;
+    if (tries >= 10) return;
 
-    if(!running){
+    if (!running) {
         running = true;
         startTime = performance.now();
         display.textContent = "0.000 s";
@@ -393,99 +223,152 @@ timerButton.addEventListener("click", () => {
     } else {
         running = false;
         tries++;
-        const elapsed = (performance.now() - startTime)/1000;
+
+        const elapsed = (performance.now() - startTime) / 1000;
         const formatted = parseFloat(elapsed.toFixed(3));
         currentResults.push(formatted);
+
         display.textContent = formatted.toFixed(3) + " s";
         triesDisplay.textContent = "Tries: " + tries + " / 10";
-        if(formatted === 3.000){
+
+        if (formatted === 3.000) {
             document.body.style.backgroundColor = "green";
             timerButton.textContent = "You Win!";
-            cheer.currentTime=0; cheer.play();
+            cheer.currentTime = 0;
+            cheer.play();
         } else {
             document.body.style.backgroundColor = "red";
             timerButton.textContent = "Try Again";
-            buzz.currentTime=0; buzz.play();
+            buzz.currentTime = 0;
+            buzz.play();
         }
-        if(tries >= 10) timerButton.textContent = "Reset";
+
+        if (tries >= 10) timerButton.textContent = "Reset";
     }
 });
 
-function updateTimer(){
-    if(running){
-        const elapsed = (performance.now() - startTime)/1000;
+function updateTimer() {
+    if (running) {
+        const elapsed = (performance.now() - startTime) / 1000;
         display.textContent = elapsed.toFixed(3) + " s";
         requestAnimationFrame(updateTimer);
     }
 }
 
-function showEndSummary(){
+function showEndSummary() {
     const allResults = consolidatedResults[playerNameValue];
     endSummaryBox.innerHTML = "";
-    if(!allResults || allResults.length===0) return;
-    const bestTime = allResults.reduce((a,b)=> Math.abs(a-3)<Math.abs(b-3)?a:b );
-    allResults.forEach((t,i)=> endSummaryBox.innerHTML+=`Try ${i+1}: ${t.toFixed(3)} s<br>`);
-    endSummaryBox.innerHTML+=`<br><b>Best Time (closest to 3s):</b> ${bestTime.toFixed(3)} s`;
+    if (!allResults || allResults.length === 0) return;
+
+    const bestTime = allResults.reduce((a, b) =>
+        Math.abs(a - 3) < Math.abs(b - 3) ? a : b
+    );
+
+    allResults.forEach((t, i) => {
+        endSummaryBox.innerHTML += `Try ${i + 1}: ${t.toFixed(3)} s<br>`;
+    });
+
+    endSummaryBox.innerHTML += `<br><b>Best Time (closest to 3s):</b> ${bestTime.toFixed(3)} s`;
 }
 
-// ⭐ SAME PLAYER / NEXT PLAYER
-samePlayerBtnEnd.addEventListener("click", ()=>{
-    endScreen.style.display="none";
-    gameScreen.style.display="flex";
-    tries=0;
-    display.textContent="0.000 s";
-    triesDisplay.textContent="Tries: 0 / 10";
-    message.textContent="";
-    currentResults=[];
-    summaryBox.style.display="none";
-    timerButton.textContent="Start";
-    document.body.style.backgroundColor="white";
+/* ---------------------------------------------------- */
+/* END SCREEN OPTIONS */
+/* ---------------------------------------------------- */
+samePlayerBtnEnd.addEventListener("click", () => {
+    endScreen.style.display = "none";
+    gameScreen.style.display = "flex";
+
+    tries = 0;
+    display.textContent = "0.000 s";
+    triesDisplay.textContent = "Tries: 0 / 10";
+    message.textContent = "";
+    currentResults = [];
+    summaryBox.style.display = "none";
+    timerButton.textContent = "Start";
+    document.body.style.backgroundColor = "white";
 });
 
-nextPlayerBtnEnd.addEventListener("click", ()=>{
-    endScreen.style.display="none";
-    homeScreen.style.display="flex";
-    currentResults=[];
-    tries=0;
-    document.getElementById("playerName").value="";
-    document.getElementById("playerMobile").value="";
+nextPlayerBtnEnd.addEventListener("click", () => {
+    endScreen.style.display = "none";
+    homeScreen.style.display = "flex";
+
+    currentResults = [];
+    tries = 0;
+    document.getElementById("playerName").value = "";
+    document.getElementById("playerMobile").value = "";
 });
 
-// ⭐ SIDEBAR → LEADERBOARD
-sidebarButton.addEventListener("click", ()=>{
-    endScreen.style.display="none";
-    leaderboardScreen.style.display="flex";
+/* ---------------------------------------------------- */
+/* LEADERBOARD */
+/* ---------------------------------------------------- */
+sidebarButton.addEventListener("click", () => {
+    endScreen.style.display = "none";
+    leaderboardScreen.style.display = "flex";
     populateLeaderboard();
 });
 
-function populateLeaderboard(){
-    const sorted = [...allPlayerScores].sort((a,b)=>Math.abs(a.time-3)-Math.abs(b.time-3));
-    const top10 = sorted.slice(0,10);
-    leaderboardContent.innerHTML="";
-    top10.forEach((p,i)=> leaderboardContent.innerHTML+=`${i+1}. ${p.name}: ${p.time.toFixed(3)} s<br>`);
+function populateLeaderboard() {
+    const sorted = [...allPlayerScores].sort(
+        (a, b) => Math.abs(a.time - 3) - Math.abs(b.time - 3)
+    );
+
+    const top10 = sorted.slice(0, 10);
+
+    leaderboardContent.innerHTML = "";
+    top10.forEach((p, i) => {
+        leaderboardContent.innerHTML += `${i + 1}. ${p.name}: ${p.time.toFixed(3)} s<br>`;
+    });
 }
 
-// ⭐ LEADERBOARD BUTTONS
-samePlayerLeaderboardBtn.addEventListener("click", ()=>{
-    leaderboardScreen.style.display="none";
-    gameScreen.style.display="flex";
-    tries=0;
-    display.textContent="0.000 s";
-    triesDisplay.textContent="Tries: 0 / 10";
-    message.textContent="";
-    currentResults=[];
-    timerButton.textContent="Start";
-    document.body.style.backgroundColor="white";
+samePlayerLeaderboardBtn.addEventListener("click", () => {
+    leaderboardScreen.style.display = "none";
+    gameScreen.style.display = "flex";
+
+    tries = 0;
+    display.textContent = "0.000 s";
+    triesDisplay.textContent = "Tries: 0 / 10";
+    currentResults = [];
+    timerButton.textContent = "Start";
+    document.body.style.backgroundColor = "white";
 });
 
-nextPlayerLeaderboardBtn.addEventListener("click", ()=>{
-    leaderboardScreen.style.display="none";
-    homeScreen.style.display="flex";
-    currentResults=[];
-    tries=0;
-    document.getElementById("playerName").value="";
-    document.getElementById("playerMobile").value="";
+nextPlayerLeaderboardBtn.addEventListener("click", () => {
+    leaderboardScreen.style.display = "none";
+    homeScreen.style.display = "flex";
+
+    currentResults = [];
+    tries = 0;
+    document.getElementById("playerName").value = "";
+    document.getElementById("playerMobile").value = "";
 });
+
+/* ---------------------------------------------------- */
+/* ⭐ CSV EXPORT FEATURE */
+/* ---------------------------------------------------- */
+**function exportCSV() {  
+    if (allPlayerScores.length === 0) {  
+        alert("No data available to export.");  
+        return;  
+    }  
+
+    let csv = "Name,Mobile,Score,Timestamp\n";  
+
+    allPlayerScores.forEach(row => {  
+        csv += `${row.name},${row.mobile || ""},${row.time},${row.timestamp || ""}\n`;  
+    });  
+
+    const blob = new Blob([csv], { type: "text/csv" });  
+    const url = URL.createObjectURL(blob);  
+
+    const a = document.createElement("a");  
+    a.href = url;  
+    a.download = "appointed_time_scores.csv";  
+    a.click();  
+
+    URL.revokeObjectURL(url);  
+}**
+
+**document.getElementById("exportCSVBtn").addEventListener("click", exportCSV);**
 </script>
 
 </body>
