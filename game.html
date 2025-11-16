@@ -418,10 +418,7 @@ timerButton.addEventListener("click", () => {
         const allResults = consolidatedResults[playerNameValue];
         const bestTime = allResults.reduce((a,b)=> Math.abs(a-3)<Math.abs(b-3)?a:b );
         
-        // 3. ⭐ SEND DATA TO GOOGLE SHEET ⭐
-        sendResultToSheet(playerNameValue, playerMobileValue, bestTime.toFixed(3)); 
-        
-        // 4. Continue with game flow
+        // 3. Continue with game flow
         gameScreen.style.display = "none";
         endScreen.style.display = "flex";
         endPlayerInfo.textContent = `Player: ${playerNameValue}`;
