@@ -345,6 +345,45 @@ const startButton = document.getElementById('startButton');
 const buzz = document.getElementById('buzzSound');
 const cheer = document.getElementById('cheerSound');
 
+const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbxraGYeSDBtomGGTDViSESg_8LZDiuvPFbXm2SZ4yHKUw_iqooYteLOGR5AQx1E4FKx4w/exec';
+
+/**
+ * Sends the game result data to the Google Sheet API.
+ * @param {string} name - Player's name.
+ * @param {string} mobile - Player's mobile number.
+ * @param {number} score - The player's best time (closest to 3s).
+ */
+async function sendResultToSheet(name, mobile, score) {
+    const data = {
+        name: name,
+        mobile: mobile,
+        score: score,
+        // Timestamp will be added by the Apps Script server for accuracy
+    };
+
+    console.log("Sending data to Google Sheet:", data);
+
+    try {
+        const response = await fetch(SHEET_API_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Required to bypass CORS restrictions for simple submissions
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        // The no-cors mode prevents reading the response, but the data is sent.
+        // For a more detailed check, you'd need to set up CORS properly
+        // or use an Apps Script feature that allows simple response checks.
+        console.log("Data sent (check Google Sheet for confirmation).");
+
+    } catch (error) {
+        console.error("Error submitting score to Google Sheet:", error);
+        // You might want to alert the user or log this failure
+    }
+}
+
 // ⭐ HOME SCREEN → GAME START
 startButton.addEventListener("click", () => {
     playerNameValue = document.getElementById("playerName").value.trim();
@@ -368,18 +407,27 @@ startButton.addEventListener("click", () => {
 // ⭐ GAME LOGIC
 timerButton.addEventListener("click", () => {
     if(tries >= 10 && timerButton.textContent === "Reset"){
-        // save current results
-        currentResults.forEach(t=>{
-            allPlayerScores.push({name: playerNameValue, time: t});
-            consolidatedResults[playerNameValue].push(t);
-        });
-        gameScreen.style.display = "none";
-        endScreen.style.display = "flex";
-        endPlayerInfo.textContent = `Player: ${playerNameValue}`;
-        endMessage.textContent = "Thanks for playing!";
-        showEndSummary();
-        return;
-    }
+        // 1. Save current results
+        currentResults.forEach(t=>{
+            allPlayerScores.push({name: playerNameValue, time: t});
+            consolidatedResults[playerNameValue].push(t);
+        });
+
+        // 2. Find the best time for the entire session
+        const allResults = consolidatedResults[playerNameValue];
+        const bestTime = allResults.reduce((a,b)=> Math.abs(a-3)<Math.abs(b-3)?a:b );
+        
+        // 3. ⭐ SEND DATA TO GOOGLE SHEET ⭐
+        sendResultToSheet(playerNameValue, playerMobileValue, bestTime.toFixed(3)); 
+        
+        // 4. Continue with game flow
+        gameScreen.style.display = "none";
+        endScreen.style.display = "flex";
+        endPlayerInfo.textContent = `Player: ${playerNameValue}`;
+        endMessage.textContent = "Thanks for playing!";
+        showEndSummary();
+        return;
+    }
 
     if(tries >= 10) return;
 
