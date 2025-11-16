@@ -443,11 +443,13 @@ timerButton.addEventListener("click", () => {
         const formatted = parseFloat(elapsed.toFixed(3));
         currentResults.push(formatted);
 
+        const cumulativeTryNumber = (consolidatedResults[playerNameValue]?.length || 0) + currentResults.length;
+
         sendResultToSheet(
         playerNameValue,
         playerMobileValue,
         formatted,
-        tries // ⭐ NEW: record try number
+        cumulativeTryNumber
 );
 
       
