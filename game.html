@@ -353,11 +353,12 @@ const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbyV9OXwo708diV3pL
  * @param {string} mobile - Player's mobile number.
  * @param {number} score - The player's best time (closest to 3s).
  */
-async function sendResultToSheet(name, mobile, score) {
+async function sendResultToSheet(name, mobile, score, tryNumber) {
     const data = {
         name: name,
         mobile: mobile,
         score: score,
+        try: tryNumber
         // Timestamp will be added by the Apps Script server for accuracy
     };
 
@@ -445,7 +446,13 @@ timerButton.addEventListener("click", () => {
         const formatted = parseFloat(elapsed.toFixed(3));
         currentResults.push(formatted);
 
-        sendResultToSheet(playerNameValue, playerMobileValue, formatted);
+        sendResultToSheet(
+        playerNameValue,
+        playerMobileValue,
+        formatted,
+        tries  // ⭐ NEW: record try number
+);
+
       
         display.textContent = formatted.toFixed(3) + " s";
         triesDisplay.textContent = "Tries: " + tries + " / 10";
