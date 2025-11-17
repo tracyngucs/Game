@@ -393,7 +393,7 @@ startButton.addEventListener("click", () => {
         alert("Please enter both name and mobile number.");
         return;
     }
-    playerInfo.textContent = `Player: ${playerNameValue}`;
+    playerInfo.textContent = Player: ${playerNameValue};
     homeScreen.style.display = "none";
     gameScreen.style.display = "flex";
     tries = 0;
@@ -421,7 +421,7 @@ timerButton.addEventListener("click", () => {
         // 3. Continue with game flow
         gameScreen.style.display = "none";
         endScreen.style.display = "flex";
-        endPlayerInfo.textContent = `Player: ${playerNameValue}`;
+        endPlayerInfo.textContent = Player: ${playerNameValue};
         endMessage.textContent = "Thanks for playing!";
         showEndSummary();
         return;
@@ -481,8 +481,8 @@ function showEndSummary(){
     endSummaryBox.innerHTML = "";
     if(!allResults || allResults.length===0) return;
     const bestTime = allResults.reduce((a,b)=> Math.abs(a-3)<Math.abs(b-3)?a:b );
-    allResults.forEach((t,i)=> endSummaryBox.innerHTML+=`Try ${i+1}: ${t.toFixed(3)} s<br>`);
-    endSummaryBox.innerHTML+=`<br><b>Best Time (closest to 3s):</b> ${bestTime.toFixed(3)} s`;
+    allResults.forEach((t,i)=> endSummaryBox.innerHTML+=Try ${i+1}: ${t.toFixed(3)} s<br>);
+    endSummaryBox.innerHTML+=<br><b>Best Time (closest to 3s):</b> ${bestTime.toFixed(3)} s;
 }
 
 // ⭐ SAME PLAYER / NEXT PLAYER
@@ -502,13 +502,26 @@ samePlayerBtnEnd.addEventListener("click", ()=>{
 nextPlayerBtnEnd.addEventListener("click", ()=>{
     endScreen.style.display="none";
     homeScreen.style.display="flex";
-    currentResults=[];
-    tries=0;
-    document.getElementById("playerName").value="";
-    document.getElementById("playerMobile").value="";
+
+    // Reset the session tracking
+    currentResults = [];
+    tries = 0;
     timerButton.textContent = "Start";
-    homeScreen.style.backgroundColor = "#ffffff";
+    document.body.style.backgroundColor = "white";
+
+    // Reset cumulative results for the next session
+    const prevName = playerNameValue;  // store current player
+    playerNameValue = "";
+    playerMobileValue = "";
+    document.getElementById("playerName").value = "";
+    document.getElementById("playerMobile").value = "";
+
+    // Clear consolidated results for the same player name
+    if(consolidatedResults[prevName]){
+        consolidatedResults[prevName] = [];
+    }
 });
+
 
 // ⭐ SIDEBAR → LEADERBOARD
 sidebarButton.addEventListener("click", ()=>{
@@ -521,7 +534,7 @@ function populateLeaderboard(){
     const sorted = [...allPlayerScores].sort((a,b)=>Math.abs(a.time-3)-Math.abs(b.time-3));
     const top10 = sorted.slice(0,10);
     leaderboardContent.innerHTML="";
-    top10.forEach((p,i)=> leaderboardContent.innerHTML+=`${i+1}. ${p.name}: ${p.time.toFixed(3)} s<br>`);
+    top10.forEach((p,i)=> leaderboardContent.innerHTML+=${i+1}. ${p.name}: ${p.time.toFixed(3)} s<br>);
 }
 
 // ⭐ LEADERBOARD BUTTONS
