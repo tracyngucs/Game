@@ -436,7 +436,7 @@ timerButton.addEventListener("click", () => {
         // 3. Continue with game flow
         gameScreen.style.display = "none";
         endScreen.style.display = "flex";
-        endPlayerInfo.textContent = Player: ${playerNameValue};
+        endPlayerInfo.textContent = `Player: ${playerNameValue}`;
         endMessage.textContent = "Thanks for playing!";
         showEndSummary();
         return;
@@ -496,8 +496,11 @@ function showEndSummary(){
     endSummaryBox.innerHTML = "";
     if(!allResults || allResults.length===0) return;
     const bestTime = allResults.reduce((a,b)=> Math.abs(a-3)<Math.abs(b-3)?a:b );
-    allResults.forEach((t,i)=> endSummaryBox.innerHTML+=Try ${i+1}: ${t.toFixed(3)} s<br>);
-    endSummaryBox.innerHTML+=<br><b>Best Time (closest to 3s):</b> ${bestTime.toFixed(3)} s;
+    allResults.forEach((t,i)=> 
+    endSummaryBox.innerHTML += `Try ${i+1}: ${t.toFixed(3)} s<br>`
+);
+
+endSummaryBox.innerHTML += `<br><b>Best Time (closest to 3s):</b> ${bestTime.toFixed(3)} s`;
 }
 
 // ⭐ SAME PLAYER / NEXT PLAYER
@@ -536,7 +539,10 @@ function populateLeaderboard(){
     const sorted = [...allPlayerScores].sort((a,b)=>Math.abs(a.time-3)-Math.abs(b.time-3));
     const top10 = sorted.slice(0,10);
     leaderboardContent.innerHTML="";
-    top10.forEach((p,i)=> leaderboardContent.innerHTML+=${i+1}. ${p.name}: ${p.time.toFixed(3)} s<br>);
+    top10.forEach((p,i)=> 
+    leaderboardContent.innerHTML += `${i+1}. ${p.name}: ${p.time.toFixed(3)} s<br>`
+);
+
 }
 
 // ⭐ LEADERBOARD BUTTONS
