@@ -447,6 +447,13 @@ if (!playerNameValue || !playerMobileValue) {
     return;
 }
 
+//<--- paste code here-->
+ // ⭐ Play background music on first user interaction
+    music.currentTime = 0;
+    music.play().catch(() => {
+        console.log("Music play blocked by browser.");
+    });
+//<--End-->
   
 // ⭐ Reset try numbers if same player name is typed again
 if (playerNameValue === lastPlayerName) {
@@ -477,10 +484,7 @@ const music = document.getElementById("bgMusic");
 music.volume = 0.4;
 music.loop = true;
 
-// Try playing immediately; some browsers block autoplay until user interacts
-music.play().catch(() => {
-  console.log("Autoplay blocked. Will play on user interaction.");
-});
+
 
 // ⭐ GAME LOGIC
 timerButton.addEventListener("click", () => {
