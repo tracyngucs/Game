@@ -444,7 +444,9 @@ if (!playerNameValue || !playerMobileValue) {
 // ⭐ Play background music
 const music = document.getElementById("bgMusic");
 music.volume = 0.4;
+music.loop = true;      // ensure looping
 music.play().catch(() => {});
+
 
   
 // ⭐ Reset try numbers if same player name is typed again
