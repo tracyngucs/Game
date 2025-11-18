@@ -546,9 +546,11 @@ if (formatted === 3.000) {
     document.body.style.backgroundColor = "red";
     timerButton.textContent = "Try Again";
     
-    // Play buzz sound over background music
-    buzz.currentTime = 0;
-    buzz.play().catch(() => console.log("Buzz blocked"));
+    // Play buzz sound over background music using a new Audio object
+const buzzClone = new Audio('Music.mp3'); // replace with your buzz sound file path
+buzzClone.volume = 1.0; // optional
+buzzClone.play().catch(() => console.log("Buzz blocked"));
+
 }
 
 if (tries >= 10) timerButton.textContent = "Reset";
