@@ -49,12 +49,22 @@ body {
   #startButton {
     padding: 14px 30px;
     font-size: 22px;
-    background: #0077cc;
+    background: linear-gradient(to bottom, #0B6623, #39A66D); /* Christmas green gradient */
     color: white;
+    font-weight: bold;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-  }
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 0 8px rgba(0, 128, 0, 0.5); /* subtle glow */
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+#startButton:hover {
+    background: linear-gradient(to bottom, #1B7A3D, #50C878); /* brighter on hover */
+    transform: translateY(-2px); /* lift effect on hover */
+    box-shadow: 0 6px 10px rgba(0,0,0,0.4), 0 0 12px rgba(0, 255, 0, 0.7); /* stronger glow */
+}
+
 
   /* GAME SCREEN */
   #gameScreen {
