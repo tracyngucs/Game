@@ -534,18 +534,25 @@ timerButton.addEventListener("click", () => {
 );
 
       
-        display.textContent = formatted.toFixed(3) + " s";
-        triesDisplay.textContent = "Tries: " + tries + " / 10";
-        if(formatted === 3.000){
-            document.body.style.backgroundColor = "green";
-            timerButton.textContent = "You Win!";
-            cheer.currentTime=0; cheer.play();
-        } else {
-            document.body.style.backgroundColor = "red";
-            timerButton.textContent = "Try Again";
-            buzz.currentTime=0; buzz.play();
-        }
-        if(tries >= 10) timerButton.textContent = "Reset";
+       display.textContent = formatted.toFixed(3) + " s";
+triesDisplay.textContent = "Tries: " + tries + " / 10";
+
+if (formatted === 3.000) {
+    document.body.style.backgroundColor = "green";
+    timerButton.textContent = "You Win!";
+    cheer.currentTime = 0;
+    cheer.play().catch(() => console.log("Cheer blocked"));
+} else {
+    document.body.style.backgroundColor = "red";
+    timerButton.textContent = "Try Again";
+    
+    // Play buzz sound over background music
+    buzz.currentTime = 0;
+    buzz.play().catch(() => console.log("Buzz blocked"));
+}
+
+if (tries >= 10) timerButton.textContent = "Reset";
+
     }
 });
 
