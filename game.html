@@ -341,8 +341,6 @@ body {
   </div>
 </div>
 
-</div> <!-- end of leaderboardScreen div -->
-
 <!-- SOUNDS -->
 <audio id="bgMusic" loop preload="auto">
   <source src="your-music-file.mp3" type="audio/mpeg">
@@ -356,18 +354,22 @@ body {
   <source src="Kids Cheer.wav" type="audio/wav">
 </audio>
 
+<!-- JS code -->
 <script>
-  // Your JavaScript code here
-  // Play background music on first click
-const music = document.getElementById("bgMusic");
-music.volume = 0.4;
-music.loop = true;
-music.play().catch(() => {});
+document.addEventListener("DOMContentLoaded", () => {
+    const music = document.getElementById("bgMusic");
+    music.volume = 0.4;
 
-</script>
+    // Play music after first user click
+    document.body.addEventListener("click", () => {
+        music.play().catch(()=>{});
+    }, { once: true });
 
+    // ⭐ START BUTTON & GAME LOGIC
+    const startButton = document.getElementById('startButton');
+    const gameScreen = document.getElementById('gameScreen');
+    const homeScreen = document.getElementById('homeScreen');
 
-<script>
 let running = false;
 let startTime = 0;
 let tries = 0;
