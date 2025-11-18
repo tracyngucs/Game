@@ -204,13 +204,19 @@ body {
     border-radius: 8px;
     border: none;
     cursor: pointer;
-    background: gold;    /* gold background */
-    color: black;         /* black text */
+    background: linear-gradient(to bottom, #FFD700, #FFA500); /* shiny gold gradient */
+    color: black;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 0 10px rgba(255, 215, 0, 0.6); /* glow effect */
+    transition: transform 0.1s, box-shadow 0.2s;
 }
 
 #playerChoiceEnd button:hover {
-    background: #e6c200; /* slightly darker gold on hover */
+    background: linear-gradient(to bottom, #FFE135, #FFB84D); /* brighter on hover */
+    transform: translateY(-2px); /* small lift on hover */
+    box-shadow: 0 6px 10px rgba(0,0,0,0.4), 0 0 15px rgba(255, 223, 0, 0.8); /* stronger glow */
 }
+
 
 
   /* LEADERBOARD SCREEN */
