@@ -365,10 +365,6 @@ document.addEventListener("DOMContentLoaded", () => {
         music.play().catch(()=>{});
     }, { once: true });
 
-    // ⭐ START BUTTON & GAME LOGIC
-    const startButton = document.getElementById('startButton');
-    const gameScreen = document.getElementById('gameScreen');
-    const homeScreen = document.getElementById('homeScreen');
 
 let running = false;
 let startTime = 0;
@@ -404,6 +400,8 @@ const sidebarButton = document.getElementById('sidebarButton');
 const leaderboardContent = document.getElementById('leaderboardContent');
 const samePlayerLeaderboardBtn = document.getElementById('samePlayerLeaderboardBtn');
 const nextPlayerLeaderboardBtn = document.getElementById('nextPlayerLeaderboardBtn');
+
+const startButton = document.getElementById('startButton');
 
 const buzz = document.getElementById('buzzSound');
 const cheer = document.getElementById('cheerSound');
