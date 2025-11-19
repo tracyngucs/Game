@@ -486,9 +486,9 @@ music.loop = true;
 
 // ⭐ Play buzz sound independently (over background music)
 function playBuzz() {
-    buzz.currentTime = 0;   // rewind to start
-    buzz.volume = 1.0;
-    buzz.play().catch(err => console.log("Buzz blocked:", err));
+    // Use the preloaded 'buzz' element instead of creating a new one
+    buzz.currentTime = 0; // Rewind to the start just in case it's mid-play
+    buzz.play().catch(err => console.log("Buzz blocked:", err));
 }
 
 
