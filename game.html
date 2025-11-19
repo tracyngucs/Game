@@ -486,7 +486,7 @@ music.loop = true;
 
 // ⭐ Play buzz sound independently (over background music)
 function playBuzz() {
-    const buzzSound = new Audio('Music.mp3'); // replace with your buzz sound file path
+    const buzzSound = new Audio('fail-buzzer.mp3'); // replace with your buzz sound file path
     buzzSound.volume = 1.0;
     buzzSound.play().catch(err => console.log("Buzz blocked:", err));
 }
