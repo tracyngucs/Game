@@ -613,12 +613,13 @@ nextPlayerBtnEnd.addEventListener("click", ()=>{
     homeScreen.style.backgroundColor = "#ffffff";
 });
 
-// ⭐ SIDEBAR → LEADERBOARD
-sidebarButton.addEventListener("click", ()=>{
-    endScreen.style.display="none";
-    leaderboardScreen.style.display="flex";
-    populateLeaderboard();
+// ⭐ SIDEBAR → LEADERBOARD (updated for dynamic leaderboard)
+sidebarButton.addEventListener("click", async () => {
+    endScreen.style.display = "none";
+    leaderboardScreen.style.display = "flex";
+    await populateLeaderboard(); // ensures it always shows latest scores
 });
+
 
 async function populateLeaderboard(){
     try {
