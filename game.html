@@ -399,6 +399,12 @@ const cheer = document.getElementById('cheerSound');
 
 const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbyV9OXwo708diV3pLK4mQP2qgcktouHWfPEiAuz9vutMIQO0kBsoxtG59CFbkv8_NXS1g/exec';
 
+async function fetchLeaderboard() {
+    const response = await fetch(SHEET_API_URL);
+    const data = await response.json();
+    return data; // Array of player scores
+}
+  
 /**
  * Sends the game result data to the Google Sheet API.
  * @param {string} name - Player's name.
