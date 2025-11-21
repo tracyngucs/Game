@@ -682,6 +682,18 @@ nextPlayerLeaderboardBtn.addEventListener("click", ()=>{
     document.getElementById("playerName").value="";
     document.getElementById("playerMobile").value="";
 });
+
+const refreshLeaderboardBtn = document.getElementById("refreshLeaderboardBtn");
+
+refreshLeaderboardBtn.addEventListener("click", async () => {
+    refreshLeaderboardBtn.disabled = true; // prevent double clicks
+    refreshLeaderboardBtn.textContent = "Refreshing…";
+    await populateLeaderboard(); // call your existing async function
+    refreshLeaderboardBtn.textContent = "🔄 Refresh";
+    refreshLeaderboardBtn.disabled = false;
+});  
+
+  
 </script>
 
   
