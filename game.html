@@ -621,22 +621,26 @@ sidebarButton.addEventListener("click", async () => {
 });
 
 
-async function populateLeaderboard(){
+async function populateLeaderboard() {
     try {
-        const response = await fetch(SHEET_API_URL); // Make a GET request
-        const data = await response.json(); // Assuming your Apps Script returns JSON like [{name, mobile, score, try}, ...]
-        
-        // Sort by closest to 3s
+        leaderboardContent.innerHTML = "Loading...";  // temp text
+
+        const response = await fetch(SHEET_API_URL);
+        const data = await response.json();
+
         const sorted = data.sort((a,b) => Math.abs(a.score - 3) - Math.abs(b.score - 3));
         const top10 = sorted.slice(0,10);
 
-        leaderboardContent.innerHTML = "";
+        // Build the whole HTML in memory first
+        let html = "";
         top10.forEach((p, i) => {
-            leaderboardContent.innerHTML += `${i+1}. ${p.name}: ${p.score.toFixed(3)} s<br>`;
+            html += `${i+1}. ${p.name}: ${p.score.toFixed(3)} s<br>`;
         });
 
+        // Update DOM ONCE
+        leaderboardContent.innerHTML = html;
+
     } catch (err) {
-        console.error("Error fetching leaderboard:", err);
         leaderboardContent.innerHTML = "Failed to load leaderboard.";
     }
 }
