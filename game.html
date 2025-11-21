@@ -621,26 +621,38 @@ sidebarButton.addEventListener("click", async () => {
 });
 
 
+let firstLoad = true; // keep track of first load
+
 async function populateLeaderboard() {
     try {
-        leaderboardContent.innerHTML = "Loading...";  // temp text
+        // Show "Loading..." only on first load
+        if (firstLoad) {
+            leaderboardContent.innerHTML = "Loading...";
+        }
 
         const response = await fetch(SHEET_API_URL);
         const data = await response.json();
 
-        const sorted = data.sort((a,b) => Math.abs(a.score - 3) - Math.abs(b.score - 3));
-        const top10 = sorted.slice(0,10);
+        // Sort by closest to 3s
+        const sorted = data.sort((a, b) => Math.abs(a.score - 3) - Math.abs(b.score - 3));
+        const top10 = sorted.slice(0, 10);
 
-        // Build the whole HTML in memory first
+        // Build HTML
         let html = "";
         top10.forEach((p, i) => {
-            html += `${i+1}. ${p.name}: ${p.score.toFixed(3)} s<br>`;
+            html += `${i + 1}. ${p.name}: ${p.score.toFixed(3)} s<br>`;
         });
 
-        // Update DOM ONCE
+        // Add timestamp
+        const now = new Date();
+        const timestamp = now.toLocaleString("en-MY", { hour12: false, timeZone: "Asia/Kuala_Lumpur" });
+        html += `<br><small>Last refreshed: ${timestamp}</small>`;
+
         leaderboardContent.innerHTML = html;
 
+        firstLoad = false; // subsequent calls won't show "Loading..."
     } catch (err) {
+        console.error("Error fetching leaderboard:", err);
         leaderboardContent.innerHTML = "Failed to load leaderboard.";
     }
 }
