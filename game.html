@@ -552,7 +552,7 @@ timerButton.addEventListener("click", () => {
        display.textContent = formatted.toFixed(3) + " s";
 triesDisplay.textContent = "Tries: " + tries + " / 10";
 
-if (formatted === 3.000) {
+if (formatted === 3.000 || formatted === 3.142) {
     document.body.style.backgroundColor = "green";
     timerButton.textContent = "You Win!";
     cheer.currentTime = 0;
