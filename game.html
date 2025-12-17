@@ -287,23 +287,42 @@ body {
     box-shadow: 0 6px 10px rgba(0,0,0,0.4), 0 0 12px rgba(0, 255, 0, 0.7); /* stronger glow */
 }
 
+/* Floating leaderboard button */
+  #viewLeaderboardBtn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 6px 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      background: linear-gradient(to bottom, #0B6623, #39A66D);
+      color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      z-index: 1000; /* stays on top */
+      transition: transform 0.1s, box-shadow 0.2s;
+  }
+
+  #viewLeaderboardBtn:hover {
+      background: linear-gradient(to bottom, #1B7A3D, #50C878);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+  }
+
 </style>
 </head>
 <body>
 
+<!-- Floating leaderboard button -->
+<button id="viewLeaderboardBtn">🏆</button>
+  
 <!-- HOME SCREEN -->
 <div id="homeScreen">
   <h1>Appointed Time</h1>
   <input type="text" id="playerName" placeholder="Enter Name" /><br>
   <input type="tel" id="playerMobile" placeholder="Enter Mobile Number" /><br>
   <button id="startButton">Start Now</button>
-
-<!-- New sidebar-style leaderboard button -->
-  <div id="homeLeaderboardBtn" class="sidebar-style-btn" style="margin-top: 20px;">
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
 </div>
 
 <!-- GAME SCREEN -->
