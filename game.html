@@ -628,7 +628,6 @@ let firstLoad = true; // keep track of first load
 
 async function populateLeaderboard() {
     try {
-        // Show "Loading..." only on first load
         if (firstLoad) {
             leaderboardContent.innerHTML = "Loading...";
         }
@@ -636,24 +635,40 @@ async function populateLeaderboard() {
         const response = await fetch(SHEET_API_URL);
         const data = await response.json();
 
-        // Sort by closest to 3s
+        // --- NEW LOGIC: 3.142 leaderboard ---
+        const winners3142 = data.filter(p => Number(p.score.toFixed(3)) === 3.142).slice(0, 10);
+
+        // --- ORIGINAL LOGIC PRESERVED ---
         const sorted = data.sort((a, b) => Math.abs(a.score - 3) - Math.abs(b.score - 3));
         const top10 = sorted.slice(0, 10);
 
-        // Build HTML
         let html = "";
+
+        // Section 3.142
+        html += `<strong>🎯Top 10 — 3.142s</strong><br>`;
+        if (winners3142.length === 0) {
+            html += `No winners yet.<br><br>`;
+        } else {
+            winners3142.forEach((p, i) => {
+                html += `${i + 1}. ${p.name}: ${p.score.toFixed(3)} s<br>`;
+            });
+            html += `<br>`;
+        }
+
+        // Section 3.000 (original closest-to-3 logic)
+        html += `<strong>🎯Top 10 - 3.000s</strong><br>`;
         top10.forEach((p, i) => {
             html += `${i + 1}. ${p.name}: ${p.score.toFixed(3)} s<br>`;
         });
 
-        // Add timestamp
+        // Timestamp
         const now = new Date();
         const timestamp = now.toLocaleString("en-MY", { hour12: false, timeZone: "Asia/Kuala_Lumpur" });
         html += `<br><small>Last refreshed: ${timestamp}</small>`;
 
         leaderboardContent.innerHTML = html;
 
-        firstLoad = false; // subsequent calls won't show "Loading..."
+        firstLoad = false;
     } catch (err) {
         console.error("Error fetching leaderboard:", err);
         leaderboardContent.innerHTML = "Failed to load leaderboard.";
