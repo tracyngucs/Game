@@ -289,26 +289,26 @@ body {
 
 /* Floating leaderboard button */
   #viewLeaderboardBtn {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      padding: 6px 10px;
-      font-size: 14px;
-      border-radius: 5px;
-      background: linear-gradient(to bottom, #0B6623, #39A66D);
-      color: white;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      z-index: 1000; /* stays on top */
-      transition: transform 0.1s, box-shadow 0.2s;
-  }
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 6px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    background: rgba(0,0,0,0); /* transparent background */
+    color: white;
+    border: 2px solid white;   /* optional: white border for visibility */
+    cursor: pointer;
+    z-index: 1000;
+    transition: transform 0.1s, box-shadow 0.2s, background 0.2s;
+}
 
-  #viewLeaderboardBtn:hover {
-      background: linear-gradient(to bottom, #1B7A3D, #50C878);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.4);
-  }
+#viewLeaderboardBtn:hover {
+    background: rgba(255,255,255,0.1); /* slightly visible hover effect */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+}
+
 
 </style>
 </head>
