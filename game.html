@@ -289,40 +289,34 @@ body {
 
 /* Floating leaderboard button */
   #viewLeaderboardBtn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    padding: 6px 10px;
-    font-size: 14px;
-    border-radius: 5px;
-    background: rgba(0,0,0,0); /* transparent background */
-    color: white;
-    border: 2px solid white;   /* optional: white border for visibility */
-    cursor: pointer;
-    z-index: 1000;
-    transition: transform 0.1s, box-shadow 0.2s, background 0.2s;
+    background: none;      /* removes background */
+    border: none;          /* removes border */
+    color: white;          /* keep text visible */
+    padding: 14px 30px;    /* optional: spacing like Start button */
+    font-size: 22px;       /* optional: match Start button size */
+    cursor: pointer;       /* pointer on hover */
+    border-radius: 10px;   /* optional: rounded edges */
+    font-weight: bold;     /* optional: match Start button style */
+    box-shadow: none;      /* remove any shadow if present */
+    transition: transform 0.1s;
 }
 
 #viewLeaderboardBtn:hover {
-    background: rgba(255,255,255,0.1); /* slightly visible hover effect */
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+    transform: translateY(-2px); /* subtle hover effect */
 }
 
 
 </style>
 </head>
 <body>
-
-<!-- Floating leaderboard button -->
-<button id="viewLeaderboardBtn">🏆</button>
   
 <!-- HOME SCREEN -->
 <div id="homeScreen">
   <h1>Appointed Time</h1>
   <input type="text" id="playerName" placeholder="Enter Name" /><br>
   <input type="tel" id="playerMobile" placeholder="Enter Mobile Number" /><br>
-  <button id="startButton">Start Now</button>
+  <button id="startButton">Start Now</button><br>
+  <button id="viewLeaderboardBtn">🏆</button>
 </div>
 
 <!-- GAME SCREEN -->
