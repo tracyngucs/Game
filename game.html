@@ -635,28 +635,24 @@ async function populateLeaderboard() {
         const response = await fetch(SHEET_API_URL);
         const data = await response.json();
 
-        // --- NEW LOGIC: 3.142 leaderboard ---
-        const winners3142 = data.filter(p => Number(p.score.toFixed(3)) === 3.142).slice(0, 10);
+        // --- Sort independently to avoid mutation issues ---
+        const sorted3142 = [...data].sort((a, b) => Math.abs(a.score - 3.142) - Math.abs(b.score - 3.142));
+        const top3142 = sorted3142.slice(0, 10);
 
-        // --- ORIGINAL LOGIC PRESERVED ---
-        const sorted = data.sort((a, b) => Math.abs(a.score - 3) - Math.abs(b.score - 3));
-        const top10 = sorted.slice(0, 10);
+        const sorted3 = [...data].sort((a, b) => Math.abs(a.score - 3.000) - Math.abs(b.score - 3.000));
+        const top10 = sorted3.slice(0, 10);
 
         let html = "";
 
-        // Section 3.142
+        // Section 3.142 leaderboard
         html += `<strong>🎯Top 10 — 3.142s</strong><br>`;
-        if (winners3142.length === 0) {
-            html += `No winners yet.<br><br>`;
-        } else {
-            winners3142.forEach((p, i) => {
-                html += `${i + 1}. ${p.name}: ${p.score.toFixed(3)} s<br>`;
-            });
-            html += `<br>`;
-        }
+        top3142.forEach((p, i) => {
+            html += `${i + 1}. ${p.name}: ${p.score.toFixed(3)} s<br>`;
+        });
+        html += `<br>`;
 
-        // Section 3.000 (original closest-to-3 logic)
-        html += `<strong>🎯Top 10 - 3.000s</strong><br>`;
+        // Section 3.000 leaderboard
+        html += `<strong>🎯Top 10 — 3.000s</strong><br>`;
         top10.forEach((p, i) => {
             html += `${i + 1}. ${p.name}: ${p.score.toFixed(3)} s<br>`;
         });
@@ -669,6 +665,7 @@ async function populateLeaderboard() {
         leaderboardContent.innerHTML = html;
 
         firstLoad = false;
+
     } catch (err) {
         console.error("Error fetching leaderboard:", err);
         leaderboardContent.innerHTML = "Failed to load leaderboard.";
