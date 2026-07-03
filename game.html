@@ -13,10 +13,9 @@
 
 body {
   font-family: sans-serif;
-  background-color: #C8102E; /* fallback red to match artwork so no gaps show */
   background-image: url("Christmas-Background2.jpg");
-  background-size: contain;    /* shrinks image to fit fully, no cropping */
-  background-position: top center; /* anchors the full image at the top */
+  background-size: cover;      /* fills the whole screen */
+  background-position: center; /* centers the image */
   background-repeat: no-repeat;
   background-attachment: fixed; /* keeps it fixed even if content scrolls */
 }
@@ -71,10 +70,9 @@ body {
   #gameScreen {
     display: none;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    box-sizing: border-box;
     padding: 20px;
-    padding-top: 30vh;
   }
 
   #playerInfo {
@@ -138,9 +136,7 @@ body {
   #endScreen {
     display: none;
     flex-direction: column;
-    box-sizing: border-box;
     padding: 20px;
-    padding-top: 25vh;
   }
 
   #endContainer {
@@ -528,33 +524,33 @@ music.loop = true;
 
 // ⭐ Play buzz sound independently (over background music)
 function playBuzz() {
-    // Use the preloaded 'buzz' element instead of creating a new one
-    buzz.currentTime = 0; // Rewind to the start just in case it's mid-play
-    buzz.play().catch(err => console.log("Buzz blocked:", err));
+    // Use the preloaded 'buzz' element instead of creating a new one
+    buzz.currentTime = 0; // Rewind to the start just in case it's mid-play
+    buzz.play().catch(err => console.log("Buzz blocked:", err));
 }
 
 
 // ⭐ GAME LOGIC
 timerButton.addEventListener("click", () => {
     if(tries >= 10 && timerButton.textContent === "Reset"){
-        // 1. Save current results
-        currentResults.forEach(t=>{
-            allPlayerScores.push({name: playerNameValue, time: t});
-            consolidatedResults[playerNameValue].push(t);
-        });
+        // 1. Save current results
+        currentResults.forEach(t=>{
+            allPlayerScores.push({name: playerNameValue, time: t});
+            consolidatedResults[playerNameValue].push(t);
+        });
 
         // 2. Find the best time for the entire session
         const allResults = consolidatedResults[playerNameValue];
         const bestTime = allResults.reduce((a,b)=> Math.abs(a-3)<Math.abs(b-3)?a:b );
         
         // 3. Continue with game flow
-        gameScreen.style.display = "none";
-        endScreen.style.display = "flex";
-        endPlayerInfo.textContent = `Player: ${playerNameValue}`;
-        endMessage.textContent = "Thanks for playing!";
-        showEndSummary();
-        return;
-    }
+        gameScreen.style.display = "none";
+        endScreen.style.display = "flex";
+        endPlayerInfo.textContent = `Player: ${playerNameValue}`;
+        endMessage.textContent = "Thanks for playing!";
+        showEndSummary();
+        return;
+    }
 
     if(tries >= 10) return;
 
