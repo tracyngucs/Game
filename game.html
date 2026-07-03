@@ -13,12 +13,12 @@
 
 body {
   font-family: sans-serif;
-  background-color: #b71c1c; /* fills any space below the image with a matching solid color */
+  background-color: #C8102E; /* fallback red to match artwork so no gaps show */
   background-image: url("Christmas-Background2.jpg");
-  background-size: 100% auto;  /* shows the image at full width, natural (unzoomed) height */
-  background-position: top center;
-  background-repeat: no-repeat; /* single copy only, no seam from tiling */
-  background-attachment: scroll;
+  background-size: contain;    /* shrinks image to fit fully, no cropping */
+  background-position: top center; /* anchors the full image at the top */
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* keeps it fixed even if content scrolls */
 }
 
 /* Add this block to make the Appointed Time text white */
