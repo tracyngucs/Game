@@ -204,16 +204,21 @@ body {
 
   #playerChoiceEnd {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   #playerChoiceEnd span {
     font-size: 18px;
-    margin-right: 10px;
+    margin-bottom: 12px;
   }
 
   #playerChoiceEnd button {
-    margin: 0 10px;
+    margin: 0;
+    margin-bottom: 14px;
     padding: 10px 20px;
+    width: 200px;
     font-size: 18px;
     border-radius: 8px;
     border: none;
@@ -223,6 +228,10 @@ body {
     font-weight: bold;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 0 8px rgba(0, 128, 0, 0.5); /* subtle green glow */
     transition: transform 0.1s, box-shadow 0.2s;
+}
+
+#playerChoiceEnd button:last-child {
+    margin-bottom: 0;
 }
 
 #playerChoiceEnd button:hover {
