@@ -13,11 +13,12 @@
 
 body {
   font-family: sans-serif;
+  background-color: #b71c1c; /* matches artwork so tiling seams blend in */
   background-image: url("Christmas-Background2.jpg");
-  background-size: cover;      /* fills the whole screen */
-  background-position: center; /* centers the image */
-  background-repeat: no-repeat;
-  background-attachment: fixed; /* keeps it fixed even if content scrolls */
+  background-size: 100% auto;  /* shows the image at full width, natural (unzoomed) height */
+  background-position: top center;
+  background-repeat: repeat-y; /* tiles the artwork down the page instead of stretching/cropping it */
+  background-attachment: scroll;
 }
 
 /* Add this block to make the Appointed Time text white */
@@ -137,9 +138,7 @@ body {
   #endScreen {
     display: none;
     flex-direction: column;
-    box-sizing: border-box;
     padding: 20px;
-    padding-top: 25vh;
   }
 
   #endContainer {
