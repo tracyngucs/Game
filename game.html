@@ -13,12 +13,7 @@
 
 body {
   font-family: sans-serif;
-  background-color: #C8102E; /* fallback red to match artwork so no gaps show */
-  background-image: url("Christmas-Background2.jpg");
-  background-size: contain;    /* shrinks image to fit fully, no cropping */
-  background-position: top center; /* anchors the full image at the top */
-  background-repeat: no-repeat;
-  background-attachment: fixed; /* keeps it fixed even if content scrolls */
+  background-color: #ffffff;
 }
 
 /* Add this block to make the Appointed Time text white */
@@ -596,12 +591,10 @@ timerButton.addEventListener("click", () => {
 triesDisplay.textContent = "Tries: " + tries + " / 10";
 
 if (formatted === 3.000 || formatted === 3.142) {
-    document.body.style.backgroundColor = "green";
     timerButton.textContent = "You Win!";
     cheer.currentTime = 0;
     cheer.play().catch(() => console.log("Cheer blocked"));
 } else {
-    document.body.style.backgroundColor = "red";
     timerButton.textContent = "Try Again";
     
     playBuzz(); 
