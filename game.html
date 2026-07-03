@@ -13,11 +13,11 @@
 
 body {
   font-family: sans-serif;
-  background-color: #b71c1c; /* matches artwork so tiling seams blend in */
+  background-color: #b71c1c; /* fills any space below the image with a matching solid color */
   background-image: url("Christmas-Background2.jpg");
   background-size: 100% auto;  /* shows the image at full width, natural (unzoomed) height */
   background-position: top center;
-  background-repeat: repeat-y; /* tiles the artwork down the page instead of stretching/cropping it */
+  background-repeat: no-repeat; /* single copy only, no seam from tiling */
   background-attachment: scroll;
 }
 
@@ -138,7 +138,9 @@ body {
   #endScreen {
     display: none;
     flex-direction: column;
+    box-sizing: border-box;
     padding: 20px;
+    padding-top: 25vh;
   }
 
   #endContainer {
