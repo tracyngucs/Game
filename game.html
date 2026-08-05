@@ -9,11 +9,6 @@
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
 }
 
 body {
@@ -253,29 +248,26 @@ body {
     display: none;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    padding: 8px;
+    padding: 20px;
   }
 
   #leaderboardScreen h1 {
-    font-size: 20px;
-    margin-bottom: 12px;
+    font-size: 28px;
+    margin-bottom: 20px;
     color: white; /* change title to white */
 }
 
   #leaderboardContent {
-    width: 92%;
-    max-width: 92%;
+    width: 100%;
+    max-width: 600px;
     border: 2px solid #444;
     border-radius: 10px;
-    padding: 8px;
+    padding: 15px;
     background: #f7f7f7;
     max-height: none;
     overflow-y: auto;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
     text-align: left;
-    font-size: 13px;
-    line-height: 1.35;
   }
 
   #leaderboardButtons {
@@ -284,14 +276,14 @@ body {
   }
 
   #leaderboardButtons span {
-    font-size: 14px;
-    margin-right: 8px;
+    font-size: 18px;
+    margin-right: 10px;
   }
 
   #leaderboardButtons button {
-    margin: 0 6px;
-    padding: 6px 12px;
-    font-size: 14px;
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 18px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
@@ -373,8 +365,8 @@ body {
 
 <!-- LEADERBOARD SCREEN -->
 <div id="leaderboardScreen">
-  <button id="refreshLeaderboardBtn" style="position:absolute; top:6px; right:14px; padding:3px 7px; font-size:11px; border-radius:5px; cursor:pointer;">
-    🔄
+  <button id="refreshLeaderboardBtn" style="position:absolute; top:10px; right:10px; padding:5px 10px; font-size:14px; border-radius:5px; cursor:pointer;">
+    🔄 Refresh
   </button>
   <h1>Leaderboard</h1>
   <div id="leaderboardContent"></div>
